@@ -6,6 +6,14 @@ WorldSpec is spatial QA for generated 3D worlds. It turns a movement requirement
 
 Built solo for Ignition Hacks V7, targeting **Best of World Labs** in the **Art** category.
 
+**[Open the live WorldSpec demo](https://worldspec.vercel.app)**
+
+![WorldSpec verifying a 6.3 metre route through a World Labs Marble world](docs/assets/worldspec-pass.png)
+
+The prepared proof is deliberately comparative: the same destination rejects a
+1.4 metre-wide service robot, then verifies a 0.7 metre-wide explorer with a
+6.3 metre route and 2.22 metres of measured minimum clearance.
+
 ## The problem
 
 Generative world models can produce a scene that looks convincing while hiding functional failures: a disconnected platform, an unusable entrance, a passage too narrow for the player, or a floor a robot cannot traverse. Visual quality alone does not answer the production question: can the intended user actually move through this space?
@@ -24,7 +32,7 @@ The first target user is a technical artist or level designer reviewing an AI-ge
 6. Samples the route envelope against collider geometry.
 7. Returns pass or fail evidence in the interface and directly in 3D.
 
-The prepared orbital-greenhouse demo includes a verified 6.3 metre route. A standard 0.7 metre explorer profile passes; a 1.4 metre rescue-bot profile demonstrates how the same destination can become invalid for a larger agent.
+The prepared orbital-greenhouse demo includes a verified 6.3 metre route. A standard 0.7 metre explorer profile passes; a 1.4 metre service-robot profile demonstrates how the same destination can become invalid for a larger agent.
 
 ## Why World Labs is essential
 

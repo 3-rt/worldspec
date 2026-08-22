@@ -8,7 +8,9 @@
   --line: #b9b7ad;
   --line-dark: #343934;
   --pass: #c9f24d;
+  --pass-ink: #526a0a;
   --fail: #ff5c35;
+  --fail-ink: #b93317;
   --focus: #087e8b;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --font-sans: sans-serif;
@@ -268,7 +270,7 @@ button {
 }
 
 .marble-link:hover {
-  color: #647d13;
+  color: var(--pass-ink);
 }
 
 .generation-drawer {
@@ -346,11 +348,11 @@ button {
 }
 
 .generation-progress {
-  color: #647d13;
+  color: var(--pass-ink);
 }
 
 .generation-error {
-  color: #b43a1e;
+  color: var(--fail-ink);
 }
 
 .contract-section {
@@ -751,7 +753,7 @@ button {
 
 .is-error h2,
 .is-error p {
-  color: var(--fail);
+  color: var(--fail-ink);
 }
 
 .evidence-spinner {
@@ -784,11 +786,11 @@ button {
 }
 
 .is-pass .result-kicker {
-  color: #718b19;
+  color: var(--pass-ink);
 }
 
 .is-fail .result-kicker {
-  color: #d84320;
+  color: var(--fail-ink);
 }
 
 .evidence-metrics {
@@ -828,7 +830,7 @@ button {
   border-left: 3px solid var(--fail);
   background: rgb(255 92 53 / 8%);
   padding: 12px;
-  color: #a83218;
+  color: var(--fail-ink);
   font-family: var(--font-mono), monospace;
   font-size: 0.62rem;
 }
@@ -1058,11 +1060,23 @@ button {
   }
 
   .scene-actions {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scene-actions.has-verified-route {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .scene-actions button {
     min-height: 64px;
+  }
+
+  .scene-actions button:nth-child(even) {
+    border-right: 0;
+  }
+
+  .scene-actions button:nth-child(n + 3) {
+    border-top: 1px solid var(--line-dark);
   }
 
   .scene-actions .collider-toggle {

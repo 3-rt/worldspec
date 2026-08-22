@@ -74,7 +74,6 @@ export async function fetchPreparedWorld({
   signal,
 }: BrowserClientOptions = {}): Promise<WorldAssets> {
   const response = await fetchImplementation("/api/worlds/demo", {
-    cache: "no-store",
     signal,
   });
   return readJson(response, worldAssetsSchema);

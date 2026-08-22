@@ -11,19 +11,19 @@
 - [x] Prepared world resolves from a stable world ID.
 - [x] SPZ and collider assets return HTTP 200 with cross-origin access.
 - [x] Real collider produces a connected verified route.
-- [ ] Desktop visual journey verified at 1440 x 1000.
-- [ ] Mobile visual journey verified at 390 x 844.
-- [ ] Splat and collider alignment verified visually at three anchors.
-- [ ] End-to-end Chromium test passes.
+- [x] Desktop visual journey verified at 1440 x 1000.
+- [x] Mobile visual journey verified at 390 x 844.
+- [x] Splat and collider alignment verified visually at the greenhouse, access bridge, and destination platform.
+- [x] End-to-end Chromium test passes.
 
 ## Public delivery
 
 - [x] Public GitHub repository created and pushed.
-- [ ] Production deployment includes server-only World Labs variables.
-- [ ] Deployment tested while signed out.
-- [ ] Repository and README tested while signed out.
-- [ ] No secret appears in browser headers, source maps, logs, or tracked files.
-- [ ] Desktop and mobile production URLs tested.
+- [x] Production deployment includes server-only World Labs variables.
+- [x] Deployment tested while signed out.
+- [x] Repository and README tested while signed out.
+- [x] No secret appears in browser headers, source maps, logs, or tracked files.
+- [x] Desktop and mobile production URLs tested.
 
 ## Demo video
 
@@ -36,13 +36,13 @@
 
 ## Rubric proof
 
-- [ ] Uniqueness: distinguish spatial QA from generation, exploration, or a generic 3D viewer.
-- [ ] Technical implementation: show the live splat, collider alignment, requirement compiler, avatar-aware navmesh, and clearance evidence.
-- [ ] Presentation: name the user, problem, visible failure, passing result, and real-world value within 2:45.
-- [ ] Art theme: explain that creators need functional validation for generated spatial art and environments.
-- [ ] Impact and usefulness: name technical artists and level designers first, then players, robots, and accessibility workflows.
-- [ ] Sponsor track: show that World Labs supplies both representations required by the product, not a decorative asset.
-- [ ] Solo track: state that WorldSpec was designed and built by one hacker during Ignition Hacks V7.
+- [x] Uniqueness: distinguish spatial QA from generation, exploration, or a generic 3D viewer.
+- [x] Technical implementation: show the live splat, collider alignment, requirement compiler, avatar-aware navmesh, and clearance evidence.
+- [x] Presentation: name the user, problem, visible failure, passing result, and real-world value within 2:45.
+- [x] Art theme: explain that creators need functional validation for generated spatial art and environments.
+- [x] Impact and usefulness: name technical artists and level designers first, then players, robots, and accessibility workflows.
+- [x] Sponsor track: show that World Labs supplies both representations required by the product, not a decorative asset.
+- [x] Solo track: state that WorldSpec was designed and built by one hacker during Ignition Hacks V7.
 
 ## HackHub
 

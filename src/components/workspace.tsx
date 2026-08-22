@@ -295,6 +295,14 @@ export function Workspace({
     setAnalysisError(null);
 
     try {
+      await new Promise<void>((resolve) => {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => resolve());
+        });
+      });
+      if (runSequence.current !== thisRun) {
+        return;
+      }
       const nextReport = await analyze({
         meshes: collider.meshes,
         contract,
