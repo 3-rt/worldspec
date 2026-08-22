@@ -10,7 +10,12 @@ export async function GET(): Promise<Response> {
       process.env.DEMO_WORLD_ID ?? "",
       createServerWorldLabsClient(),
     );
-    return Response.json(world);
+    return Response.json(world, {
+      headers: {
+        "Cache-Control":
+          "public, max-age=15, s-maxage=60, stale-while-revalidate=300",
+      },
+    });
   } catch (error) {
     return worldLabsRouteError(error);
   }

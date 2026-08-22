@@ -266,6 +266,32 @@ describe("Workspace", () => {
     expect(screen.getByText("0.70 m required")).toBeVisible();
   });
 
+  test("paints the pending state before starting geometry analysis", async () => {
+    const user = userEvent.setup();
+    let pendingStateWasVisible = false;
+
+    render(
+      <Workspace
+        initialAssets={null}
+        ViewerComponent={FakeViewer}
+        analyze={async () => {
+          pendingStateWasVisible = Boolean(
+            screen.queryByText("Reading the collider"),
+          );
+          return passingReport;
+        }}
+      />,
+    );
+
+    await placeEndpoints(user);
+    await user.click(
+      screen.getByRole("button", { name: "Run spatial test" }),
+    );
+
+    expect(pendingStateWasVisible).toBe(true);
+    expect(await screen.findByText("Contract verified")).toBeVisible();
+  });
+
   test("discards an analysis completed after the requirement changes", async () => {
     const user = userEvent.setup();
     const analysis = createDeferred<AnalysisReport>();

@@ -295,6 +295,12 @@ export function Workspace({
     setAnalysisError(null);
 
     try {
+      await new Promise<void>((resolve) => {
+        window.setTimeout(resolve, 0);
+      });
+      if (runSequence.current !== thisRun) {
+        return;
+      }
       const nextReport = await analyze({
         meshes: collider.meshes,
         contract,

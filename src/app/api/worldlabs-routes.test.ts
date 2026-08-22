@@ -200,6 +200,9 @@ describe("World Labs route boundary", () => {
     const response = await getDemoWorld();
 
     expect(response.status).toBe(200);
+    expect(response.headers.get("Cache-Control")).toBe(
+      "public, max-age=15, s-maxage=60, stale-while-revalidate=300",
+    );
     expect(await response.json()).toMatchObject({
       worldId: "world-123",
       displayName: "Threshold Courtyard",
