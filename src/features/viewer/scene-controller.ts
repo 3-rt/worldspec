@@ -10,7 +10,15 @@ import {
   createMarbleColliderTransform,
   createMarbleSplatTransform,
 } from "./world-transform";
-import { buildClearanceCorridor } from "./route-visualization";
+import {
+  buildClearanceCorridor,
+  pointAtCorridorProgress,
+} from "./route-visualization";
+import {
+  createSegmentBatch,
+  segmentsBetween,
+  type StraightSegment,
+} from "./segment-batch";
 
 export type InteractionMode = "inspect" | "place-start" | "place-goal";
 
@@ -61,39 +69,6 @@ function disposeObject(root: THREE.Object3D): void {
       : [object.material];
     materials.forEach((material) => material.dispose());
   });
-}
-
-function createTube(
-  points: Vec3[],
-  options: {
-    color: number;
-    opacity?: number;
-    radius: number;
-    renderOrder: number;
-  },
-): THREE.Mesh {
-  const curve = new THREE.CatmullRomCurve3(
-    points.map((point) => new THREE.Vector3(point.x, point.y, point.z)),
-    false,
-    "centripetal",
-  );
-  const geometry = new THREE.TubeGeometry(
-    curve,
-    Math.max(points.length * 3, 16),
-    options.radius,
-    6,
-    false,
-  );
-  const material = new THREE.MeshBasicMaterial({
-    color: options.color,
-    depthTest: false,
-    depthWrite: false,
-    transparent: true,
-    opacity: options.opacity ?? 1,
-  });
-  const tube = new THREE.Mesh(geometry, material);
-  tube.renderOrder = options.renderOrder;
-  return tube;
 }
 
 function createCorridorRibbon(
@@ -267,7 +242,7 @@ export const createSceneController: SceneDriverFactory = ({
   let sparkRenderer: (THREE.Object3D & { dispose(): void }) | null = null;
   let routeRoot: THREE.Group | null = null;
   let routeScan: THREE.Group | null = null;
-  let routeScanCurve: THREE.CatmullRomCurve3 | null = null;
+  let routeScanCorridor: ReturnType<typeof buildClearanceCorridor> | null = null;
   let routeStartedAt = 0;
   let failureMarker: THREE.Group | null = null;
   let isColliderVisible = true;
@@ -290,9 +265,12 @@ export const createSceneController: SceneDriverFactory = ({
   function renderFrame(): void {
     controls.update();
     const now = performance.now();
-    if (routeScan && routeScanCurve && !reduceMotion) {
+    if (routeScan && routeScanCorridor && !reduceMotion) {
       const progress = ((now - routeStartedAt) % 2_800) / 2_800;
-      routeScan.position.copy(routeScanCurve.getPointAt(progress));
+      const scanPoint = pointAtCorridorProgress(routeScanCorridor, progress);
+      if (scanPoint) {
+        routeScan.position.set(scanPoint.x, scanPoint.y + 0.025, scanPoint.z);
+      }
       const pulse = 0.9 + Math.sin(progress * Math.PI * 2) * 0.16;
       routeScan.scale.setScalar(pulse);
     }
@@ -327,7 +305,7 @@ export const createSceneController: SceneDriverFactory = ({
       disposeObject(routeRoot);
       routeRoot = null;
       routeScan = null;
-      routeScanCurve = null;
+      routeScanCorridor = null;
     }
     if (failureMarker) {
       scene.remove(failureMarker);
@@ -634,47 +612,52 @@ export const createSceneController: SceneDriverFactory = ({
         }
         routeRoot = new THREE.Group();
         routeRoot.add(createCorridorRibbon(corridor.stations, color));
-        routeRoot.add(
-          createTube(corridor.centerline, {
+        const routeBatches = [
+          createSegmentBatch(segmentsBetween(corridor.centerline), {
             color: 0x0c0f0d,
             opacity: 0.92,
             radius: 0.048,
             renderOrder: 18,
           }),
-          createTube(corridor.centerline, {
+          createSegmentBatch(segmentsBetween(corridor.centerline), {
             color,
             radius: 0.024,
             renderOrder: 19,
           }),
-          createTube(corridor.leftRail, {
-            color,
-            opacity: 0.88,
-            radius: 0.012,
-            renderOrder: 19,
-          }),
-          createTube(corridor.rightRail, {
-            color,
-            opacity: 0.88,
-            radius: 0.012,
-            renderOrder: 19,
-          }),
-        );
-        corridor.gates.forEach((gate) => {
-          routeRoot?.add(
-            createTube([gate.left, gate.right], {
+          createSegmentBatch(
+            [
+              ...segmentsBetween(corridor.leftRail),
+              ...segmentsBetween(corridor.rightRail),
+            ],
+            {
               color,
-              opacity: 0.72,
-              radius: 0.008,
+              opacity: 0.88,
+              radius: 0.012,
               renderOrder: 19,
-            }),
-          );
+            },
+          ),
+        ].filter((batch): batch is THREE.InstancedMesh => batch !== null);
+        routeRoot.add(...routeBatches);
+
+        const floorGateSegments: StraightSegment[] = corridor.gates.map(
+          (gate) => ({ start: gate.left, end: gate.right }),
+        );
+        const floorGates = createSegmentBatch(floorGateSegments, {
+          color,
+          opacity: 0.72,
+          radius: 0.008,
+          renderOrder: 19,
         });
-        corridor.gates
+        if (floorGates) {
+          routeRoot.add(floorGates);
+        }
+
+        const heightGateSegments: StraightSegment[] = corridor.gates
           .filter(
             (_gate, index) =>
               index % 2 === 0 || index === corridor.gates.length - 1,
           )
-          .forEach((gate) => {
+          .flatMap((gate) => {
             const leftTop = {
               ...gate.left,
               y: gate.left.y + overlay.clearanceHeightMeters,
@@ -683,21 +666,21 @@ export const createSceneController: SceneDriverFactory = ({
               ...gate.right,
               y: gate.right.y + overlay.clearanceHeightMeters,
             };
-            [
-              [gate.left, leftTop],
-              [leftTop, rightTop],
-              [rightTop, gate.right],
-            ].forEach((segment) => {
-              routeRoot?.add(
-                createTube(segment, {
-                  color,
-                  opacity: 0.46,
-                  radius: 0.007,
-                  renderOrder: 18,
-                }),
-              );
-            });
+            return [
+              { start: gate.left, end: leftTop },
+              { start: leftTop, end: rightTop },
+              { start: rightTop, end: gate.right },
+            ];
           });
+        const heightGates = createSegmentBatch(heightGateSegments, {
+          color,
+          opacity: 0.46,
+          radius: 0.007,
+          renderOrder: 18,
+        });
+        if (heightGates) {
+          routeRoot.add(heightGates);
+        }
 
         routeScan = new THREE.Group();
         const scanCore = new THREE.Mesh(
@@ -723,19 +706,22 @@ export const createSceneController: SceneDriverFactory = ({
         scanRing.rotation.x = Math.PI / 2;
         scanRing.renderOrder = 21;
         routeScan.add(scanRing);
-        routeScanCurve = new THREE.CatmullRomCurve3(
-          corridor.centerline.map(
-            (point) => new THREE.Vector3(point.x, point.y + 0.025, point.z),
-          ),
-          false,
-          "centripetal",
+        routeScanCorridor = corridor;
+        const initialScanPoint = pointAtCorridorProgress(
+          corridor,
+          reduceMotion ? 0.5 : 0,
         );
-        routeScan.position.copy(routeScanCurve.getPointAt(reduceMotion ? 0.5 : 0));
+        if (initialScanPoint) {
+          routeScan.position.set(
+            initialScanPoint.x,
+            initialScanPoint.y + 0.025,
+            initialScanPoint.z,
+          );
+        }
         routeRoot.add(routeScan);
         routeStartedAt = performance.now();
         scene.add(routeRoot);
       }
-
     },
 
     dispose() {

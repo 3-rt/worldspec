@@ -18,6 +18,7 @@ export type ClearanceCorridor = {
 
 const STATION_SPACING_METERS = 0.35;
 const ROUTE_ELEVATION_METERS = 0.08;
+const DISTANCE_EPSILON_METERS = 1e-9;
 
 function distanceBetween(start: Vec3, end: Vec3): number {
   return Math.hypot(end.x - start.x, end.y - start.y, end.z - start.z);
@@ -54,6 +55,21 @@ function pointAtDistance(
   };
 }
 
+export function pointAtCorridorProgress(
+  corridor: ClearanceCorridor,
+  progress: number,
+): Vec3 | null {
+  if (corridor.centerline.length < 2 || corridor.lengthMeters <= 0) {
+    return null;
+  }
+
+  return pointAtDistance(
+    corridor.centerline,
+    corridor.stations.map((station) => station.distanceMeters),
+    Math.min(Math.max(progress, 0), 1) * corridor.lengthMeters,
+  );
+}
+
 export function buildClearanceCorridor(
   path: Vec3[],
   clearanceWidthMeters: number,
@@ -87,7 +103,7 @@ export function buildClearanceCorridor(
       lengthMeters: 0,
     };
   }
-  const stationDistances: number[] = [];
+  const stationDistances = [...cumulativeDistances];
   for (
     let distance = 0;
     distance < lengthMeters;
@@ -96,8 +112,14 @@ export function buildClearanceCorridor(
     stationDistances.push(distance);
   }
   stationDistances.push(lengthMeters);
+  stationDistances.sort((left, right) => left - right);
+  const uniqueStationDistances = stationDistances.filter(
+    (distance, index) =>
+      index === 0 ||
+      distance - stationDistances[index - 1] > DISTANCE_EPSILON_METERS,
+  );
 
-  const centers = stationDistances.map((distance) => {
+  const centers = uniqueStationDistances.map((distance) => {
     const point = pointAtDistance(path, cumulativeDistances, distance);
     return { ...point, y: point.y + ROUTE_ELEVATION_METERS };
   });
@@ -123,7 +145,7 @@ export function buildClearanceCorridor(
         y: center.y,
         z: center.z - normalZ * halfWidth,
       },
-      distanceMeters: stationDistances[index],
+      distanceMeters: uniqueStationDistances[index],
     };
   });
 
