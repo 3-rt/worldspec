@@ -216,7 +216,7 @@ Run all World Labs tests and typecheck. Call `POST /marble/v1/worlds:list` with 
 **Interfaces:**
 - Produces: metric transform functions, `SceneController`, `WorldViewer`, collider scene data, and point-selection events.
 
-- [ ] **Step 1: Write failing transform tests**
+- [x] **Step 1: Write failing transform tests**
 
 ```ts
 expect(toMetricPosition(
@@ -225,21 +225,21 @@ expect(toMetricPosition(
 )).toEqual({ x: 2.5, y: 3.35, z: 5 });
 ```
 
-Also assert uniform scale `1.25`, Y translation `-0.4`, X rotation `Math.PI`, and inverse round-trip tolerance `1e-6`.
+Also assert uniform scale `1.25`, direct Three.js object Y translation `+0.4`, X rotation `Math.PI`, and inverse round-trip tolerance `1e-6`. The positive object translation is the composed result of subtracting the offset before the 180-degree X-axis conversion.
 
-- [ ] **Step 2: Verify red, implement transforms, and verify green**
+- [x] **Step 2: Verify red, implement transforms, and verify green**
 
 Run `npm test -- src/features/viewer/world-transform.test.ts` before and after the pure implementation.
 
-- [ ] **Step 3: Write a failing viewer lifecycle test**
+- [x] **Step 3: Write a failing viewer lifecycle test**
 
 Inject a `SceneDriver`. Assert mount adds exactly one canvas, interaction mode changes reach the driver, unmount disposes it, and loading/errors are user-visible. Do not test Three.js internals.
 
-- [ ] **Step 4: Implement scene controller and synthetic world**
+- [x] **Step 4: Implement scene controller and synthetic world**
 
 The synthetic world contains a floor, raised goal, and narrow opening. The controller owns renderer, camera, orbit controls, Spark renderer, SplatMesh, collider, resize observer, raycaster, markers, route, failure marker, frame loop, and disposal. Spark loads dynamically in the browser. The collider is translucent with depth-aware edges.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run viewer and transform tests plus typecheck, with no browser-only code during server render. Update state and commit with `git commit -m "feat: render Marble worlds in a testable scene"`.
 

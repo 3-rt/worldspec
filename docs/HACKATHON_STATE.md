@@ -1,17 +1,17 @@
 # WorldSpec Hackathon State
 
-Updated: August 21, 2026 at 8:36 PM America/Toronto
+Updated: August 21, 2026 at 8:42 PM America/Toronto
 
 ## Current milestone
 
-Task 3 of 10 is complete. WorldSpec has a tested server-only World Labs client, safe response normalization, request validation, generation and polling routes, and verified live API authentication. Task 4 is next: Marble coordinate transforms and the 3D scene foundation.
+Task 4 of 10 is complete. WorldSpec now has explicit Marble metric and Three.js coordinate transforms, a Spark-capable scene controller, deterministic synthetic geometry, testable viewer lifecycle ownership, point placement, collider visibility, and route overlays. Task 5 is next: Recast navigation and reachability.
 
 ## Verified evidence
 
 - Node.js: 24.19.0 LTS through `/opt/homebrew/opt/node@24/bin`
 - npm: 11.17.0
 - Runtime audit: 0 vulnerabilities
-- Unit and route tests: 6 files passed, 19 tests passed before the Task 3 commit
+- Unit, component, and route tests: 8 files passed, 24 tests passed before the Task 4 commit
 - ESLint: passed
 - TypeScript: passed with no emit
 - Production build: passed with static `/` route
@@ -28,6 +28,9 @@ Task 3 of 10 is complete. WorldSpec has a tested server-only World Labs client, 
 - Normalize World Labs responses at the server boundary and return only safe application fields to the browser.
 - Refresh asset URLs by world ID rather than persisting expiring CDN URLs.
 - Use real `Response` objects and injected fetch functions in API tests, keeping schema parsing and request formation real.
+- Represent Marble's transform in two explicit stages: metric ground alignment, then OpenCV-to-Three axis conversion.
+- Use positive object Y translation when composing the transform directly on a rotated Three.js splat. This is mathematically equivalent to subtracting ground offset before the X-axis rotation.
+- Keep renderer, camera, controls, asynchronous asset loads, overlays, and disposal inside one scene controller rather than React state.
 
 ## Current risks
 
@@ -53,4 +56,4 @@ Task 3 of 10 is complete. WorldSpec has a tested server-only World Labs client, 
 
 ## Next action
 
-Write failing tests for metric coordinate transforms and viewer lifecycle ownership.
+Write failing navigation tests against real synthetic Three.js geometry and initialize Recast behind a narrow adapter.
