@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import { describe, expect, test } from "vitest";
 
 import { analyzeWorld } from "./analyze-world";
@@ -140,5 +141,47 @@ describe("analyzeWorld", () => {
       elapsedMs: 12,
     });
     expect(factory.destroyCalls).toBe(1);
+  });
+
+  test("retains the route and marks the first measured clearance violation", async () => {
+    const routeThroughPassage = [
+      { x: 0, y: 0, z: -2 },
+      { x: 0, y: 0, z: 2 },
+    ];
+    const factory = surfaceFactory({
+      nearestPoints: routeThroughPassage,
+      path: routeThroughPassage,
+    });
+    const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.2, 3, 5));
+    leftWall.position.set(-0.4, 1.5, 0);
+    leftWall.updateMatrixWorld(true);
+    const rightWall = leftWall.clone();
+    rightWall.position.x = 0.4;
+    rightWall.updateMatrixWorld(true);
+
+    const report = await analyzeWorld({
+      meshes: [leftWall, rightWall],
+      contract: contract({
+        start: routeThroughPassage[0],
+        goal: routeThroughPassage[1],
+      }),
+      createSurface: factory.create,
+    });
+
+    expect(report).toMatchObject({
+      status: "fail",
+      path: routeThroughPassage,
+      routeLengthMeters: 4,
+      minimumClearanceMeters: 0.6,
+      failures: [
+        {
+          kind: "clearance",
+          message: "The route narrows below the required width.",
+          measuredValue: 0.6,
+          requiredValue: 0.7,
+        },
+      ],
+    });
+    expect(report.failures[0].location?.z).toBeCloseTo(-2, 1);
   });
 });

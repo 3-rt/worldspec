@@ -113,6 +113,10 @@ export const createSceneController: SceneDriverFactory = ({
 
   function renderFrame(): void {
     controls.update();
+    if (failureMarker) {
+      const pulse = 1 + Math.sin(performance.now() * 0.004) * 0.12;
+      failureMarker.scale.setScalar(pulse);
+    }
     renderer.render(scene, camera);
   }
 
@@ -375,6 +379,8 @@ export const createSceneController: SceneDriverFactory = ({
           new THREE.MeshBasicMaterial({
             color: 0xff5c35,
             depthTest: false,
+            transparent: true,
+            opacity: 0.92,
             side: THREE.DoubleSide,
           }),
         );

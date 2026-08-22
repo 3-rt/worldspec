@@ -1,17 +1,17 @@
 # WorldSpec Hackathon State
 
-Updated: August 21, 2026 at 8:46 PM America/Toronto
+Updated: August 21, 2026 at 8:49 PM America/Toronto
 
 ## Current milestone
 
-Task 5 of 10 is complete. WorldSpec now builds Recast navigation surfaces from real Three.js collider geometry, projects endpoints, computes route length, classifies invalid endpoints and disconnected regions, and releases native resources deterministically. Task 6 is next: measurable corridor clearance and spatial failure evidence.
+Task 6 of 10 is complete. WorldSpec now samples routes against real Three.js collider geometry, measures paired obstacle distances around the avatar, distinguishes unbounded space, records the first clearance violation, and preserves the route for an orange spatial failure overlay. Task 7 is next: the complete interactive workspace.
 
 ## Verified evidence
 
 - Node.js: 24.19.0 LTS through `/opt/homebrew/opt/node@24/bin`
 - npm: 11.17.0
 - Runtime audit: 0 vulnerabilities
-- Unit, component, and route tests: 10 files passed, 31 tests passed before the Task 5 commit
+- Unit, component, and route tests: 11 files passed, 35 tests passed before the Task 6 commit
 - ESLint: passed
 - TypeScript: passed with no emit
 - Production build: passed with static `/` route
@@ -33,6 +33,8 @@ Task 5 of 10 is complete. WorldSpec now builds Recast navigation surfaces from r
 - Keep renderer, camera, controls, asynchronous asset loads, overlays, and disposal inside one scene controller rather than React state.
 - Convert metric avatar dimensions into Recast voxel counts conservatively instead of passing metres into voxel-valued configuration fields.
 - Reject Detour partial paths whose last point remains more than two navigation cells from the projected goal.
+- Measure corridor width with paired horizontal rays at avatar mid-height so floors and ceilings cannot masquerade as lateral clearance.
+- Use the first contract violation for spatial explanation while retaining the global minimum measurement for the report.
 
 ## Current risks
 
@@ -58,4 +60,4 @@ Task 5 of 10 is complete. WorldSpec now builds Recast navigation surfaces from r
 
 ## Next action
 
-Write failing clearance tests against hand-measured Three.js corridor geometry and integrate the first violation into analysis reports.
+Write failing user-workflow component tests, then replace the temporary landing shell with the complete inspection workspace.

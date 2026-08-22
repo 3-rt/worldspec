@@ -278,19 +278,19 @@ Run `npm test -- src/features/analysis`. Expect no WASM leaks or console errors.
 **Interfaces:**
 - Produces: `measureRouteClearance(input)` and a visible failure location in `AnalysisReport`.
 
-- [ ] **Step 1: Write failing corridor tests**
+- [x] **Step 1: Write failing corridor tests**
 
 Use real Three.js walls around a straight route. A 2.0 metre corridor must measure within `0.1` of `2.0`. A section narrowing to `0.6` against required `0.7` must fail near that segment. No nearby walls returns `Infinity` and passes.
 
-- [ ] **Step 2: Implement deterministic sampling**
+- [x] **Step 2: Implement deterministic sampling**
 
 Resample every `0.2` metres. At avatar mid-height, cast paired horizontal rays in 16 directions bounded at 5 metres. The minimum sum of opposing hits is passage width. Record global minimum and the first sample below the threshold.
 
-- [ ] **Step 3: Integrate route evidence**
+- [x] **Step 3: Integrate route evidence**
 
 Run reachability first. A narrow route retains its path, returns `fail`, and includes measured and required values. Passing routes render acid-lime; failures render safety-orange with a pulsing ring at the recorded location.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run all analysis and viewer tests plus typecheck. Update state and commit with `git commit -m "feat: expose route clearance failures in space"`.
 

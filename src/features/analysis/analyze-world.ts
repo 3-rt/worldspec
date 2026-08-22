@@ -1,5 +1,6 @@
 import type * as THREE from "three";
 
+import { measureRouteClearance } from "./clearance";
 import {
   buildNavigationSurface,
   findRoute,
@@ -102,10 +103,47 @@ export async function analyzeWorld({
       );
     }
 
+    const measuredRouteLength = routeLength(route.path);
+    const clearance = measureRouteClearance({
+      path: route.path,
+      colliderMeshes: meshes,
+      avatarHeightMeters: contract.agent.heightMeters,
+      requiredWidthMeters: contract.minimumClearanceMeters,
+    });
+    const measuredClearance = Number.isFinite(clearance.minimumClearanceMeters)
+      ? Number(clearance.minimumClearanceMeters.toFixed(3))
+      : undefined;
+
+    if (
+      !clearance.passes &&
+      clearance.failureLocation &&
+      measuredClearance !== undefined
+    ) {
+      return {
+        status: "fail",
+        path: route.path,
+        routeLengthMeters: measuredRouteLength,
+        minimumClearanceMeters: measuredClearance,
+        failures: [
+          {
+            kind: "clearance",
+            message: "The route narrows below the required width.",
+            location: clearance.failureLocation,
+            measuredValue: measuredClearance,
+            requiredValue: contract.minimumClearanceMeters,
+          },
+        ],
+        elapsedMs: now() - startedAt,
+      };
+    }
+
     return {
       status: "pass",
       path: route.path,
-      routeLengthMeters: routeLength(route.path),
+      routeLengthMeters: measuredRouteLength,
+      ...(measuredClearance === undefined
+        ? {}
+        : { minimumClearanceMeters: measuredClearance }),
       failures: [],
       elapsedMs: now() - startedAt,
     };
