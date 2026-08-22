@@ -48,9 +48,6 @@ export function compileRequirement(
   const normalizedSource = sourceText.trim();
   const heightMeters = findMeasurement(normalizedSource, ["height", "tall"]);
   const widthMeters = findMeasurement(normalizedSource, ["width", "wide"]);
-  const prohibitsJumping = /(?:without|no)\s+jump(?:ing)?\b/i.test(
-    normalizedSource,
-  );
 
   return worldContractSchema.parse({
     sourceText: normalizedSource,
@@ -62,7 +59,7 @@ export function compileRequirement(
       ...baseAgent,
       heightMeters: heightMeters ?? baseAgent.heightMeters,
       radiusMeters: widthMeters ? widthMeters / 2 : baseAgent.radiusMeters,
-      stepHeightMeters: prohibitsJumping ? 0 : baseAgent.stepHeightMeters,
+      stepHeightMeters: baseAgent.stepHeightMeters,
     },
   });
 }

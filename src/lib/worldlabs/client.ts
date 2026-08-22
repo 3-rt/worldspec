@@ -119,7 +119,7 @@ export function createWorldLabsClient({
           502,
         );
       }
-      return normalizeWorld(parsed.data.world);
+      return normalizeWorld(parsed.data);
     },
 
     async generateWorld({ displayName, prompt }) {

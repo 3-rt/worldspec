@@ -304,21 +304,21 @@ Run all analysis and viewer tests plus typecheck. Update state and commit with `
 **Interfaces:**
 - Produces: the complete setup, inspect, analyze, and result journey.
 
-- [ ] **Step 1: Write failing workflow tests**
+- [x] **Step 1: Write failing workflow tests**
 
 With only WebGL and API boundaries injected, prove: prepared demo opens with the example contract; `Set entrance` changes the instruction; both points enable `Run spatial test`; passing analysis displays `Contract verified`; failing analysis displays `Clearance fails` with both measurements.
 
-- [ ] **Step 2: Implement explicit workflow states**
+- [x] **Step 2: Implement explicit workflow states**
 
 Use `loading-world`, `placing-start`, `placing-goal`, `ready`, `analyzing`, `pass`, and `fail`. Keep one source of truth for contract and selections. Abort stale fetches and runs on world change.
 
-- [ ] **Step 3: Implement the intentional interface**
+- [x] **Step 3: Implement the intentional interface**
 
 Build an asymmetric desktop composition with numbered contract rail, dominant viewport, evidence ledger, and baseline status strip. Use surveying marks and hairline grids instead of generic cards. During analysis, briefly desaturate the viewport, pass one scan line across it, and resolve the route. Respect reduced motion.
 
 Below 900px, put the viewer first, controls in a horizontal step rail, and evidence in a bottom sheet. Use 44px targets, visible focus, non-color labels, and no page-level horizontal overflow.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run component tests, lint, typecheck, and production build with no hydration, accessibility, or lifecycle warnings. Update state and commit with `git commit -m "feat: complete the WorldSpec inspection workflow"`.
 
@@ -332,11 +332,11 @@ Run component tests, lint, typecheck, and production build with no hydration, ac
 **Interfaces:**
 - Produces: reliable demo resolution by ID, live prompt generation, bounded polling, and retry.
 
-- [ ] **Step 1: Test and implement the demo resolver**
+- [x] **Step 1: Test and implement the demo resolver**
 
 Blank world ID returns code `demo-not-configured`; a valid ID resolves through the normalizer. Store no CDN URL in configuration. Expose `GET /api/worlds/demo` backed by server-only `DEMO_WORLD_ID`.
 
-- [ ] **Step 2: Generate a purpose-built Marble world**
+- [x] **Step 2: Generate a purpose-built Marble world**
 
 Use this exact prompt:
 
@@ -350,7 +350,7 @@ Poll every 10 seconds. Record only operation ID, final world ID, duration, and s
 
 Compare three recognizable anchors while toggling collider visibility. Correct only `WorldTransform` if needed, and reproduce any correction with a failing test first.
 
-- [ ] **Step 4: Finish live generation and deterministic scenario**
+- [x] **Step 4: Finish live generation and deterministic scenario**
 
 Poll every five seconds for up to ten minutes with progress, retry, and `Open in Marble`. Keep the prepared demo usable during generation. Confirm one coordinate pair plus two profiles produce deterministic contrasting results. Store only safe points and profiles, not asset URLs.
 

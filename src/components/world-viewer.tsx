@@ -9,6 +9,7 @@ import {
   type InteractionMode,
   type SceneDriver,
   type SceneDriverFactory,
+  type SceneAnchors,
   type SceneOverlay,
   type SelectionEvent,
 } from "@/features/viewer/scene-controller";
@@ -18,13 +19,15 @@ export type {
   InteractionMode,
   SceneDriver,
   SceneDriverFactory,
+  SceneAnchors,
   SceneOverlay,
   SelectionEvent,
 };
 
-type WorldViewerProps = {
+export type WorldViewerProps = {
   assets: WorldAssets | null;
   interactionMode: InteractionMode;
+  anchors?: SceneAnchors;
   colliderVisible?: boolean;
   overlay?: SceneOverlay | null;
   onPointSelected?: (event: SelectionEvent) => void;
@@ -37,9 +40,12 @@ type ViewerStatus =
   | { kind: "ready" }
   | { kind: "error"; message: string };
 
+const EMPTY_ANCHORS: SceneAnchors = { start: null, goal: null };
+
 export function WorldViewer({
   assets,
   interactionMode,
+  anchors = EMPTY_ANCHORS,
   colliderVisible = true,
   overlay = null,
   onPointSelected,
@@ -66,11 +72,12 @@ export function WorldViewer({
       return;
     }
 
-    const driver = driverFactory({
-      onPointSelected: (event) => onPointSelectedRef.current?.(event),
-    });
+    let driver: SceneDriver | null = null;
 
     try {
+      driver = driverFactory({
+        onPointSelected: (event) => onPointSelectedRef.current?.(event),
+      });
       driver.mount(container);
       driverRef.current = driver;
     } catch (error) {
@@ -81,11 +88,13 @@ export function WorldViewer({
       queueMicrotask(() => {
         setStatus({ kind: "error", message });
       });
+      driver?.dispose();
+      return;
     }
 
     return () => {
       driverRef.current = null;
-      driver.dispose();
+      driver?.dispose();
     };
   }, [driverFactory]);
 
@@ -131,6 +140,10 @@ export function WorldViewer({
   useEffect(() => {
     driverRef.current?.setInteractionMode(interactionMode);
   }, [interactionMode]);
+
+  useEffect(() => {
+    driverRef.current?.setAnchors(anchors);
+  }, [anchors]);
 
   useEffect(() => {
     driverRef.current?.setColliderVisible(colliderVisible);

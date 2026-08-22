@@ -1,5 +1,6 @@
 export type WorldLabsErrorCode =
   | "configuration"
+  | "demo-not-configured"
   | "invalid-response"
   | "incomplete-world"
   | "unauthorized"

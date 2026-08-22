@@ -3,7 +3,8 @@ import { z } from "zod";
 const optionalUrlSchema = z.union([z.string().url(), z.literal("")]).nullish();
 
 export const worldApiSchema = z.object({
-  id: z.string().min(1),
+  id: z.string().min(1).optional(),
+  world_id: z.string().min(1).optional(),
   display_name: z.string(),
   tags: z.array(z.string()).nullable().optional(),
   world_marble_url: z.string().url(),
@@ -44,13 +45,20 @@ export const worldApiSchema = z.object({
     .nullable()
     .optional(),
   model: z.string().nullable().optional(),
-});
+})
+  .refine((world) => Boolean(world.id || world.world_id), {
+    message: "A world ID is required.",
+  })
+  .transform(({ world_id: worldId, ...world }) => ({
+    ...world,
+    id: world.id ?? worldId!,
+  }));
 
 export type WorldApi = z.infer<typeof worldApiSchema>;
 
-export const worldResponseSchema = z.object({
-  world: worldApiSchema,
-});
+export const worldResponseSchema = z
+  .union([z.object({ world: worldApiSchema }), worldApiSchema])
+  .transform((response) => ("world" in response ? response.world : response));
 
 export const worldAssetsSchema = z.object({
   worldId: z.string().min(1),

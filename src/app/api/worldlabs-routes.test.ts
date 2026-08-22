@@ -7,6 +7,7 @@ import {
 
 import { GET as getOperation } from "./operations/[operationId]/route";
 import { GET as getWorld } from "./worlds/[worldId]/route";
+import { GET as getDemoWorld } from "./worlds/demo/route";
 import { POST as generateWorld } from "./worlds/generate/route";
 
 afterEach(() => {
@@ -119,6 +120,38 @@ describe("World Labs route boundary", () => {
       colliderGlbUrl: "https://assets.example.test/world-123-collider.glb",
     });
     expect(JSON.stringify(body)).not.toContain("server-only-test-key");
+  });
+
+  test("returns a bounded error when the prepared demo is not configured", async () => {
+    configureServer();
+    vi.stubEnv("DEMO_WORLD_ID", "");
+
+    const response = await getDemoWorld();
+
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({
+      error: {
+        code: "demo-not-configured",
+        message: "The prepared Marble world is not configured yet.",
+      },
+    });
+  });
+
+  test("resolves the prepared demo through its stable world ID", async () => {
+    configureServer();
+    vi.stubEnv("DEMO_WORLD_ID", "world-123");
+    vi.stubGlobal(
+      "fetch",
+      async () => Response.json(worldResponseFixture.world),
+    );
+
+    const response = await getDemoWorld();
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      worldId: "world-123",
+      displayName: "Threshold Courtyard",
+    });
   });
 
   test("returns normalized operation data", async () => {

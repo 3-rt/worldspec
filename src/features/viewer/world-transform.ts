@@ -59,3 +59,11 @@ export function createMarbleSplatTransform(
     rotation: { x: Math.PI, y: 0, z: 0 },
   };
 }
+
+export function createMarbleColliderTransform(): ObjectTransform {
+  return {
+    scale: { x: 1, y: 1, z: 1 },
+    position: { x: 0, y: 0, z: 0 },
+    rotation: { x: Math.PI, y: 0, z: 0 },
+  };
+}

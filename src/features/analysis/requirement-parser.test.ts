@@ -4,7 +4,7 @@ import { compileRequirement } from "./requirement-parser";
 import { defaultAgentProfile } from "./schemas";
 
 describe("compileRequirement", () => {
-  test("compiles player dimensions and no-jump language into metric constraints", () => {
+  test("keeps normal step tolerance when jumping is prohibited", () => {
     const result = compileRequirement(
       "A player who is 1.8 m tall and 0.7 m wide must reach the platform without jumping.",
       defaultAgentProfile,
@@ -16,7 +16,7 @@ describe("compileRequirement", () => {
       agent: {
         heightMeters: 1.8,
         radiusMeters: 0.35,
-        stepHeightMeters: 0,
+        stepHeightMeters: 0.3,
       },
       minimumClearanceMeters: 0.7,
       requirePath: true,

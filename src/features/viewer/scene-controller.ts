@@ -6,7 +6,10 @@ import type { Vec3 } from "@/features/analysis/schemas";
 import type { WorldAssets } from "@/lib/worldlabs/schemas";
 
 import { createSyntheticWorld } from "./synthetic-world";
-import { createMarbleSplatTransform } from "./world-transform";
+import {
+  createMarbleColliderTransform,
+  createMarbleSplatTransform,
+} from "./world-transform";
 
 export type InteractionMode = "inspect" | "place-start" | "place-goal";
 
@@ -21,6 +24,11 @@ export type SceneOverlay = {
   failureLocation?: Vec3;
 };
 
+export type SceneAnchors = {
+  start: Vec3 | null;
+  goal: Vec3 | null;
+};
+
 export type ColliderSceneData = {
   meshes: THREE.Mesh[];
 };
@@ -29,6 +37,7 @@ export type SceneDriver = {
   mount(container: HTMLElement): void;
   loadWorld(assets: WorldAssets | null): Promise<ColliderSceneData>;
   setInteractionMode(mode: InteractionMode): void;
+  setAnchors(anchors: SceneAnchors): void;
   setColliderVisible(visible: boolean): void;
   setOverlay(overlay: SceneOverlay | null): void;
   dispose(): void;
@@ -88,6 +97,7 @@ export const createSceneController: SceneDriverFactory = ({
   const pointer = new THREE.Vector2();
   const markers = new Map<Exclude<InteractionMode, "inspect">, THREE.Mesh>();
   let mode: InteractionMode = "inspect";
+  let anchors: SceneAnchors = { start: null, goal: null };
   let containerElement: HTMLElement | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let colliderRoot: THREE.Object3D | null = null;
@@ -240,6 +250,26 @@ export const createSceneController: SceneDriverFactory = ({
     markers.set(markerMode, marker);
   }
 
+  function renderAnchors(): void {
+    const entries = [
+      ["place-start", anchors.start],
+      ["place-goal", anchors.goal],
+    ] as const;
+    entries.forEach(([markerMode, point]) => {
+      const existing = markers.get(markerMode);
+      if (!point) {
+        if (existing) {
+          scene.remove(existing);
+          existing.geometry.dispose();
+          (existing.material as THREE.Material).dispose();
+          markers.delete(markerMode);
+        }
+        return;
+      }
+      createMarker(markerMode, new THREE.Vector3(point.x, point.y, point.z));
+    });
+  }
+
   function handlePointer(event: PointerEvent): void {
     if (mode === "inspect" || colliderMeshes.length === 0) {
       return;
@@ -289,6 +319,7 @@ export const createSceneController: SceneDriverFactory = ({
           mesh.visible = isColliderVisible;
         });
         scene.add(synthetic.root);
+        renderAnchors();
         frameCollider(synthetic.root);
         return { meshes: synthetic.meshes };
       }
@@ -303,6 +334,23 @@ export const createSceneController: SceneDriverFactory = ({
       }
 
       colliderRoot = gltf.scene;
+      const colliderTransform = createMarbleColliderTransform();
+      colliderRoot.scale.set(
+        colliderTransform.scale.x,
+        colliderTransform.scale.y,
+        colliderTransform.scale.z,
+      );
+      colliderRoot.position.set(
+        colliderTransform.position.x,
+        colliderTransform.position.y,
+        colliderTransform.position.z,
+      );
+      colliderRoot.rotation.set(
+        colliderTransform.rotation.x,
+        colliderTransform.rotation.y,
+        colliderTransform.rotation.z,
+      );
+      colliderRoot.updateWorldMatrix(true, true);
       colliderMeshes = styleCollider(gltf.scene);
       scene.add(gltf.scene);
 
@@ -334,6 +382,7 @@ export const createSceneController: SceneDriverFactory = ({
       if (disposed || thisLoad !== loadSequence) {
         return { meshes: [] };
       }
+      renderAnchors();
       frameCollider(gltf.scene);
       return { meshes: colliderMeshes };
     },
@@ -342,6 +391,11 @@ export const createSceneController: SceneDriverFactory = ({
       mode = nextMode;
       renderer.domElement.style.cursor =
         nextMode === "inspect" ? "grab" : "crosshair";
+    },
+
+    setAnchors(nextAnchors) {
+      anchors = nextAnchors;
+      renderAnchors();
     },
 
     setColliderVisible(visible) {

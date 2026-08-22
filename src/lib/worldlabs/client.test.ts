@@ -49,6 +49,21 @@ describe("createWorldLabsClient", () => {
     });
   });
 
+  test("accepts the direct world shape returned by the live get endpoint", async () => {
+    const { id, ...world } = worldResponseFixture.world;
+    const recorder = createRecordingFetch({ world_id: id, ...world });
+    const client = createWorldLabsClient({
+      apiKey: "test-api-key",
+      baseUrl: "https://api.worldlabs.ai",
+      fetch: recorder.fetch,
+    });
+
+    await expect(client.getWorld("world-123")).resolves.toMatchObject({
+      worldId: "world-123",
+      displayName: "Threshold Courtyard",
+    });
+  });
+
   test("starts text generation with the documented Marble request", async () => {
     const recorder = createRecordingFetch(pendingOperationFixture);
     const client = createWorldLabsClient({

@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import {
+  createMarbleColliderTransform,
   createMarbleSplatTransform,
   fromThreePosition,
   toMetricPosition,
@@ -31,6 +32,14 @@ describe("Marble world coordinate transforms", () => {
       x: 2.5,
       y: -3.35,
       z: -5,
+    });
+  });
+
+  test("converts the metric collider from OpenCV to Three axes", () => {
+    expect(createMarbleColliderTransform()).toEqual({
+      scale: { x: 1, y: 1, z: 1 },
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: Math.PI, y: 0, z: 0 },
     });
   });
 

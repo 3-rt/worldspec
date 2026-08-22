@@ -1,5 +1,9 @@
 import { render, screen } from "@testing-library/react";
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
+
+vi.mock("@/components/world-viewer", () => ({
+  WorldViewer: () => <div aria-label="Interactive generated world" />,
+}));
 
 import Home from "./page";
 
