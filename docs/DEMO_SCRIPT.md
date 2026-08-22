@@ -10,7 +10,7 @@ Show the title and the full workspace.
 
 ## 0:18-0:42 - World Labs as the source of truth
 
-"This orbital greenhouse was generated with World Labs Marble. Marble provides two synchronized representations: the Gaussian splat is the visual world, and the paired collider is physical evidence. WorldSpec needs both. Remove either one and the product cannot verify the world."
+"This orbital greenhouse was generated with World Labs Marble. Marble provides two synchronized representations. The Gaussian splat is the world the creator sees. The paired collider is what WorldSpec tests."
 
 Orbit the scene. Toggle Collider off, then on.
 
@@ -32,7 +32,7 @@ Replace the sentence with a `1.4 m wide` service-robot requirement. Confirm the 
 
 Pause on the orange evidence state.
 
-"The same destination is no longer valid for this larger agent. That is actionable production evidence, not a visual guess."
+"The same destination is no longer valid for this larger agent. The evidence panel identifies the invalid destination so the level designer knows what failed."
 
 ## 1:50-2:25 - Passing result and technical proof
 
@@ -46,6 +46,6 @@ Point out route length, minimum clearance, and compute time.
 
 ## 2:25-2:38 - Impact and close
 
-"World models should not only create places. They should help us prove those places work for players, robots, and accessibility needs. WorldSpec turns Marble's visual and physical outputs into the QA layer between beautiful generated art and a usable world."
+"WorldSpec uses Marble's visual and physical outputs to check generated places for players, robots, and accessibility needs. It is the QA layer between generated environment art and a world someone can use."
 
 End on the pass evidence and the WorldSpec wordmark.

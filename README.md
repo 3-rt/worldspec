@@ -12,7 +12,7 @@ Built solo for Ignition Hacks V7, targeting **Best of World Labs** in the **Art*
 
 ![WorldSpec verifying a 6.3 metre route through a World Labs Marble world](docs/assets/worldspec-pass.png)
 
-The prepared proof is deliberately comparative: the same destination rejects a
+The prepared proof uses the same route twice. The destination rejects a
 1.4 metre-wide service robot, then verifies a 0.7 metre-wide explorer with a
 6.3 metre route and 2.22 metres of measured minimum clearance.
 
@@ -36,9 +36,9 @@ The first target user is a technical artist or level designer reviewing an AI-ge
 
 The prepared orbital-greenhouse demo includes a verified 6.3 metre route. A standard 0.7 metre explorer profile passes; a 1.4 metre service-robot profile demonstrates how the same destination can become invalid for a larger agent.
 
-## Why World Labs is essential
+## How WorldSpec uses World Labs
 
-Marble is not a decorative asset source here. WorldSpec depends on its paired representations of the same generated space:
+WorldSpec uses two representations of the same Marble world:
 
 - SPZ Gaussian splats provide the high-fidelity visual world.
 - Collider GLB geometry provides the physical evidence.
@@ -52,15 +52,15 @@ Both exports use Marble's OpenCV coordinate frame. WorldSpec converts them to Th
 ```text
 Marble world ID
     |
-    +-- server-only World API client -- fresh SPZ + collider URLs
+    +-> server-only World API client -> fresh SPZ + collider URLs
     |
-    +-- Three.js + Spark ------------ visual world and point selection
+    +-> Three.js + Spark -> visual world and point selection
     |
-    +-- Recast ---------------------- avatar-aware connected route
+    +-> Recast -> avatar-aware connected route
     |
-    +-- paired ray sampling --------- minimum route clearance
+    +-> paired ray sampling -> minimum route clearance
     |
-    +-- evidence ledger ------------ pass/fail explanation and 3D overlay
+    +-> evidence ledger -> pass/fail explanation and 3D overlay
 ```
 
 The World Labs API key never enters the browser bundle. Next.js route handlers own generation and world resolution, while the browser polls operation status through that server boundary. Analysis is deterministic and runs without an additional AI service.

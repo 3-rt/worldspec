@@ -90,7 +90,7 @@ The minimum shippable product must:
 5. Determine whether a traversable path exists.
 6. Sample the resulting route for clearance violations.
 7. Render the path or the first useful failure location in the world.
-8. Present a concise result panel with evidence, not only a pass or fail label.
+8. Present a concise result panel with a pass or fail label and the evidence behind it.
 
 ### Full MVP
 
@@ -232,7 +232,7 @@ These types are the conceptual boundary. Exact fields may be refined during impl
 
 ## Failure handling
 
-- Invalid or missing API credentials produce an actionable server-side configuration message without revealing secrets.
+- Invalid or missing API credentials produce a specific server-side configuration message without revealing secrets.
 - World Labs authorization, quota, rate-limit, and generation failures are mapped to distinct user messages.
 - Generation polling has a bounded timeout and preserves the operation ID for retry.
 - Asset load failures identify whether the splat or collider failed and offer retry.
