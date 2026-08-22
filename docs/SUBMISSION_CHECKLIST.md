@@ -27,12 +27,12 @@
 
 ## Demo video
 
-- [ ] Record using `docs/DEMO_SCRIPT.md`.
-- [ ] Final duration is 2:45 or shorter.
-- [ ] Show generated world, collider toggle, contract, route anchors, fail evidence, and pass evidence.
-- [ ] Mention World Labs as the source of both the visual world and collider evidence.
-- [ ] Upload video publicly.
-- [ ] Confirm playback while signed out.
+- [x] Record using `docs/DEMO_SCRIPT.md`.
+- [x] Final duration is 2:45 or shorter.
+- [x] Show generated world, collider toggle, contract, route anchors, fail evidence, and pass evidence.
+- [x] Mention World Labs as the source of both the visual world and collider evidence.
+- [x] Upload video publicly.
+- [x] Confirm playback while signed out.
 
 ## Rubric proof
 

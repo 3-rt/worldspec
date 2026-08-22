@@ -1,10 +1,10 @@
 # WorldSpec Hackathon State
 
-Updated: August 22, 2026 at 1:05 AM America/Toronto
+Updated: August 22, 2026 at 1:07 AM America/Toronto
 
 ## Current milestone
 
-The MVP is merged and the production application is live. WorldSpec provides the complete setup, inspect, analyze, and evidence workflow, resolves the prepared Marble world by stable ID, renders its real splat and collider, and loads a verified proof route with visible anchors. Signed-out production testing has verified the 1.4 metre failure and 0.7 metre pass on desktop and mobile. A final submission-polish branch now improves mobile controls, evidence contrast, pending-state responsiveness, burst caching, browser tests, rubric mapping, and judge-facing copy before the final deployment and video.
+The submission build is merged, deployed, and ready for HackHub. WorldSpec provides the complete setup, inspect, analyze, and evidence workflow, resolves the prepared Marble world by stable ID, renders its real splat and collider, and loads a verified proof route with visible anchors. Signed-out production testing has verified the 1.4 metre failure and 0.7 metre pass on desktop and mobile. The public package now includes the application, repository, rubric-aligned copy, production screenshots, and a 2:23 narrated judging video.
 
 ## Verified evidence
 
@@ -23,6 +23,7 @@ The MVP is merged and the production application is live. WorldSpec provides the
 - Production runtime: no console errors, page errors, failed requests, or HTTP errors during the verified journey
 - Public production URL: https://worldspec.vercel.app
 - Public repository: https://github.com/3-rt/worldspec
+- Public video: https://github.com/3-rt/worldspec/releases/tag/ignition-hacks-v7-submission
 - API credential files: ignored by Git
 
 ## Decisions made during execution
@@ -50,10 +51,8 @@ The MVP is merged and the production application is live. WorldSpec provides the
 
 ## Current risks
 
-1. The final submission-polish branch still needs the no-mistakes gate, merge, production deployment, and signed-out recheck.
-2. The demo video still needs final recording, public upload, and signed-out playback verification.
-3. HackHub requires Basil's authenticated account and explicit final submission action.
-4. Spark 2.1.0 emits one upstream Three.js `Clock` deprecation warning. Spark 2.1.0 is the current release and declares compatibility with the installed Three.js version; no application console error occurs.
+1. HackHub requires Basil's authenticated account and final submission action.
+2. Spark 2.1.0 emits one upstream Three.js `Clock` deprecation warning. Spark 2.1.0 is the current release and declares compatibility with the installed Three.js version; no application console error occurs.
 
 ## Live World Labs evidence
 
@@ -83,4 +82,4 @@ The MVP is merged and the production application is live. WorldSpec provides the
 
 ## Next action
 
-Finish the submission-polish gate, merge and deploy it, record the production demo under 2:45, verify every public link signed out, and hand Basil the final HackHub copy plus the one remaining upload-and-submit sequence.
+Sign in to HackHub, paste the prepared answers from `docs/SUBMISSION_DRAFT.md`, attach the three verified public links, and submit.

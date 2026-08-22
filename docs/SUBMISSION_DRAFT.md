@@ -7,7 +7,7 @@
 - Team: Basil Liu, solo
 - Repository: https://github.com/3-rt/worldspec
 - Live application: https://worldspec.vercel.app
-- Demo video: add the final public URL after upload
+- Demo video: https://github.com/3-rt/worldspec/releases/tag/ignition-hacks-v7-submission
 
 ## Project title
 
