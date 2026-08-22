@@ -53,7 +53,7 @@ Marble world ID
     +-- evidence ledger ------------ pass/fail explanation and 3D overlay
 ```
 
-The World Labs API key never enters the browser bundle. Next.js route handlers own generation, polling, and world resolution. Analysis is deterministic and runs without an additional AI service.
+The World Labs API key never enters the browser bundle. Next.js route handlers own generation and world resolution, while the browser polls operation status through that server boundary. Analysis is deterministic and runs without an additional AI service.
 
 ## Local setup
 

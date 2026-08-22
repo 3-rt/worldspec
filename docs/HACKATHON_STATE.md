@@ -1,17 +1,17 @@
 # WorldSpec Hackathon State
 
-Updated: August 21, 2026 at 9:28 PM America/Toronto
+Updated: August 21, 2026 at 10:00 PM America/Toronto
 
 ## Current milestone
 
-Task 7 is complete and Task 8 is in progress. WorldSpec now provides the complete setup, inspect, analyze, and evidence workflow, resolves a prepared Marble world by stable ID, keeps the prepared demo active during optional generation, and can load a verified proof route with visible anchors. Live generation produced the orbital greenhouse and its real collider now builds a valid navigation surface. The public GitHub repository is live. Production deployment and visual alignment verification remain before Task 8 can close.
+The MVP implementation and delivery package are complete. WorldSpec provides the full setup, inspect, analyze, and evidence workflow, resolves a prepared Marble world by stable ID, keeps that demo active during optional generation, and loads a verified proof route with visible anchors. Live generation produced the orbital greenhouse, and its real collider builds a valid navigation surface. The public GitHub repository is live. Production deployment, visual alignment and responsive QA, and a non-skipped live end-to-end run remain.
 
 ## Verified evidence
 
 - Node.js: 24.19.0 LTS through `/opt/homebrew/opt/node@24/bin`
 - npm: 11.17.0
 - Runtime audit: 0 vulnerabilities
-- Unit, component, and route tests: 15 files passed, 52 tests passed
+- Unit, component, and route tests: 15 files passed, 58 tests passed
 - ESLint: passed
 - TypeScript: passed with no emit
 - Production build: passed with static `/` route
