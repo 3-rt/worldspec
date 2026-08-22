@@ -168,7 +168,7 @@ describe("World Labs route boundary", () => {
     expect(response.status).toBe(200);
     expect(body).toMatchObject({
       worldId: "world-123",
-      splatUrl: "https://assets.example.test/world-123-500k.spz",
+      splatUrl: "https://assets.example.test/world-123-full.spz",
       colliderGlbUrl: "https://assets.example.test/world-123-collider.glb",
     });
     expect(JSON.stringify(body)).not.toContain("server-only-test-key");

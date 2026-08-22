@@ -17,6 +17,7 @@ export function normalizeWorld(input: unknown): WorldAssets {
 
   const world = parsed.data;
   const spzUrls = world.assets.splats.spz_urls;
+  const fullResolutionSplatUrl = spzUrls.full_res || null;
   const colliderGlbUrl = world.assets.mesh.collider_mesh_url;
 
   if (!spzUrls["500k"] || !colliderGlbUrl) {
@@ -33,11 +34,11 @@ export function normalizeWorld(input: unknown): WorldAssets {
     caption: world.assets.caption ?? "",
     marbleUrl: world.world_marble_url,
     thumbnailUrl: world.assets.thumbnail_url ?? null,
-    splatUrl: spzUrls["500k"],
+    splatUrl: fullResolutionSplatUrl ?? spzUrls["500k"],
     availableSplats: {
       preview: spzUrls["100k"] ?? null,
       interactive: spzUrls["500k"],
-      full: spzUrls.full_res ?? null,
+      full: fullResolutionSplatUrl,
     },
     colliderGlbUrl,
     metricScaleFactor:
