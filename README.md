@@ -32,7 +32,7 @@ The first target user is a technical artist or level designer reviewing an AI-ge
 6. Samples the route envelope against collider geometry.
 7. Returns pass or fail evidence in the interface and directly in 3D.
 
-The prepared orbital-greenhouse demo includes a verified 6.3 metre route. A standard 0.7 metre explorer profile passes; a 1.4 metre rescue-bot profile demonstrates how the same destination can become invalid for a larger agent.
+The prepared orbital-greenhouse demo includes a verified 6.3 metre route. A standard 0.7 metre explorer profile passes; a 1.4 metre service-robot profile demonstrates how the same destination can become invalid for a larger agent.
 
 ## Why World Labs is essential
 
