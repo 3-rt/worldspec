@@ -32,7 +32,8 @@ The first target user is a technical artist or level designer reviewing an AI-ge
 4. Lets the user place an entrance and destination, or load a verified proof route.
 5. Builds an avatar-aware Recast navigation mesh from the real Marble collider.
 6. Samples the route envelope against collider geometry.
-7. Returns pass or fail evidence in the interface and directly in 3D.
+7. Draws the tested body as a measured width-and-height corridor with live scan feedback.
+8. Returns pass or fail evidence in the interface and directly in 3D.
 
 The prepared orbital-greenhouse demo includes a verified 6.3 metre route. A standard 0.7 metre explorer profile passes; a 1.4 metre service-robot profile demonstrates how the same destination can become invalid for a larger agent.
 
@@ -60,7 +61,7 @@ Marble world ID
     |
     +-> paired ray sampling -> minimum route clearance
     |
-    +-> evidence ledger -> pass/fail explanation and 3D overlay
+    +-> evidence ledger -> pass/fail explanation and measured 3D corridor
 ```
 
 The World Labs API key never enters the browser bundle. Next.js route handlers own generation and world resolution, while the browser polls operation status through that server boundary. Analysis is deterministic and runs without an additional AI service.

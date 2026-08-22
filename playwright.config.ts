@@ -31,8 +31,10 @@ export default defineConfig({
   webServer: remoteBaseUrl
     ? undefined
     : {
-        command: "npm run dev -- --hostname 127.0.0.1 --port 3100",
+        command:
+          "npm run build && npm start -- --hostname 127.0.0.1 --port 3100",
         url: localBaseUrl,
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: false,
+        timeout: 120_000,
       },
 });

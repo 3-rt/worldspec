@@ -10,6 +10,7 @@ import {
   createMarbleColliderTransform,
   createMarbleSplatTransform,
 } from "./world-transform";
+import { buildClearanceCorridor } from "./route-visualization";
 
 export type InteractionMode = "inspect" | "place-start" | "place-goal";
 
@@ -21,6 +22,8 @@ export type SelectionEvent = {
 export type SceneOverlay = {
   path: Vec3[];
   tone: "pass" | "fail";
+  clearanceHeightMeters: number;
+  clearanceWidthMeters: number;
   failureLocation?: Vec3;
 };
 
@@ -60,6 +63,164 @@ function disposeObject(root: THREE.Object3D): void {
   });
 }
 
+function createTube(
+  points: Vec3[],
+  options: {
+    color: number;
+    opacity?: number;
+    radius: number;
+    renderOrder: number;
+  },
+): THREE.Mesh {
+  const curve = new THREE.CatmullRomCurve3(
+    points.map((point) => new THREE.Vector3(point.x, point.y, point.z)),
+    false,
+    "centripetal",
+  );
+  const geometry = new THREE.TubeGeometry(
+    curve,
+    Math.max(points.length * 3, 16),
+    options.radius,
+    6,
+    false,
+  );
+  const material = new THREE.MeshBasicMaterial({
+    color: options.color,
+    depthTest: false,
+    depthWrite: false,
+    transparent: true,
+    opacity: options.opacity ?? 1,
+  });
+  const tube = new THREE.Mesh(geometry, material);
+  tube.renderOrder = options.renderOrder;
+  return tube;
+}
+
+function createCorridorRibbon(
+  stations: ReturnType<typeof buildClearanceCorridor>["stations"],
+  color: number,
+): THREE.Mesh {
+  const positions: number[] = [];
+  for (let index = 1; index < stations.length; index += 1) {
+    const previous = stations[index - 1];
+    const current = stations[index];
+    positions.push(
+      previous.left.x,
+      previous.left.y,
+      previous.left.z,
+      previous.right.x,
+      previous.right.y,
+      previous.right.z,
+      current.left.x,
+      current.left.y,
+      current.left.z,
+      previous.right.x,
+      previous.right.y,
+      previous.right.z,
+      current.right.x,
+      current.right.y,
+      current.right.z,
+      current.left.x,
+      current.left.y,
+      current.left.z,
+    );
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positions, 3),
+  );
+  const ribbon = new THREE.Mesh(
+    geometry,
+    new THREE.MeshBasicMaterial({
+      color,
+      depthTest: false,
+      depthWrite: false,
+      opacity: 0.16,
+      side: THREE.DoubleSide,
+      transparent: true,
+    }),
+  );
+  ribbon.renderOrder = 17;
+  return ribbon;
+}
+
+function createFailureBeacon(overlay: SceneOverlay): THREE.Group | null {
+  if (!overlay.failureLocation) {
+    return null;
+  }
+
+  const beacon = new THREE.Group();
+  [
+    { inner: 0.22, outer: 0.3, opacity: 1 },
+    { inner: 0.42, outer: 0.45, opacity: 0.72 },
+  ].forEach(({ inner, outer, opacity }, index) => {
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(inner, outer, 40),
+      new THREE.MeshBasicMaterial({
+        color: 0xff5c35,
+        depthTest: false,
+        depthWrite: false,
+        opacity,
+        side: THREE.DoubleSide,
+        transparent: true,
+      }),
+    );
+    ring.name = index === 1 ? "failure-orbit" : "failure-core";
+    ring.rotation.x = -Math.PI / 2;
+    ring.renderOrder = 25 + index;
+    beacon.add(ring);
+  });
+
+  const crossMaterial = new THREE.MeshBasicMaterial({
+    color: 0xff5c35,
+    depthTest: false,
+    depthWrite: false,
+  });
+  const crossX = new THREE.Mesh(
+    new THREE.BoxGeometry(0.8, 0.018, 0.025),
+    crossMaterial,
+  );
+  const crossZ = new THREE.Mesh(
+    new THREE.BoxGeometry(0.025, 0.018, 0.8),
+    crossMaterial.clone(),
+  );
+  crossX.renderOrder = 27;
+  crossZ.renderOrder = 27;
+  beacon.add(crossX, crossZ);
+
+  const failureHeight = Math.min(overlay.clearanceHeightMeters, 2.2);
+  const failureStem = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.018, 0.018, failureHeight, 6),
+    new THREE.MeshBasicMaterial({
+      color: 0xff5c35,
+      depthTest: false,
+      depthWrite: false,
+      opacity: 0.74,
+      transparent: true,
+    }),
+  );
+  failureStem.position.y = failureHeight / 2;
+  failureStem.renderOrder = 27;
+  const failureCap = new THREE.Mesh(
+    new THREE.OctahedronGeometry(0.14, 0),
+    new THREE.MeshBasicMaterial({
+      color: 0xff5c35,
+      depthTest: false,
+      depthWrite: false,
+    }),
+  );
+  failureCap.position.y = failureHeight;
+  failureCap.renderOrder = 28;
+  beacon.add(failureStem, failureCap);
+  beacon.position.set(
+    overlay.failureLocation.x,
+    overlay.failureLocation.y + 0.1,
+    overlay.failureLocation.z,
+  );
+  return beacon;
+}
+
 export const createSceneController: SceneDriverFactory = ({
   onPointSelected,
 }) => {
@@ -95,7 +256,7 @@ export const createSceneController: SceneDriverFactory = ({
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
-  const markers = new Map<Exclude<InteractionMode, "inspect">, THREE.Mesh>();
+  const markers = new Map<Exclude<InteractionMode, "inspect">, THREE.Group>();
   let mode: InteractionMode = "inspect";
   let anchors: SceneAnchors = { start: null, goal: null };
   let containerElement: HTMLElement | null = null;
@@ -104,11 +265,16 @@ export const createSceneController: SceneDriverFactory = ({
   let colliderMeshes: THREE.Mesh[] = [];
   let splatMesh: (THREE.Object3D & { dispose(): void }) | null = null;
   let sparkRenderer: (THREE.Object3D & { dispose(): void }) | null = null;
-  let routeLine: THREE.Line | null = null;
-  let failureMarker: THREE.Mesh | null = null;
+  let routeRoot: THREE.Group | null = null;
+  let routeScan: THREE.Group | null = null;
+  let routeScanCurve: THREE.CatmullRomCurve3 | null = null;
+  let routeStartedAt = 0;
+  let failureMarker: THREE.Group | null = null;
   let isColliderVisible = true;
   let disposed = false;
   let loadSequence = 0;
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")
+    .matches ?? false;
 
   function resize(): void {
     if (!containerElement) {
@@ -123,9 +289,20 @@ export const createSceneController: SceneDriverFactory = ({
 
   function renderFrame(): void {
     controls.update();
+    const now = performance.now();
+    if (routeScan && routeScanCurve && !reduceMotion) {
+      const progress = ((now - routeStartedAt) % 2_800) / 2_800;
+      routeScan.position.copy(routeScanCurve.getPointAt(progress));
+      const pulse = 0.9 + Math.sin(progress * Math.PI * 2) * 0.16;
+      routeScan.scale.setScalar(pulse);
+    }
     if (failureMarker) {
-      const pulse = 1 + Math.sin(performance.now() * 0.004) * 0.12;
+      const pulse = reduceMotion ? 1 : 1 + Math.sin(now * 0.004) * 0.12;
       failureMarker.scale.setScalar(pulse);
+      const rotatingRing = failureMarker.getObjectByName("failure-orbit");
+      if (rotatingRing && !reduceMotion) {
+        rotatingRing.rotation.z = now * 0.0006;
+      }
     }
     renderer.render(scene, camera);
   }
@@ -145,16 +322,16 @@ export const createSceneController: SceneDriverFactory = ({
   }
 
   function clearOverlay(): void {
-    if (routeLine) {
-      scene.remove(routeLine);
-      routeLine.geometry.dispose();
-      (routeLine.material as THREE.Material).dispose();
-      routeLine = null;
+    if (routeRoot) {
+      scene.remove(routeRoot);
+      disposeObject(routeRoot);
+      routeRoot = null;
+      routeScan = null;
+      routeScanCurve = null;
     }
     if (failureMarker) {
       scene.remove(failureMarker);
-      failureMarker.geometry.dispose();
-      (failureMarker.material as THREE.Material).dispose();
+      disposeObject(failureMarker);
       failureMarker = null;
     }
   }
@@ -163,8 +340,7 @@ export const createSceneController: SceneDriverFactory = ({
     clearOverlay();
     markers.forEach((marker) => {
       scene.remove(marker);
-      marker.geometry.dispose();
-      (marker.material as THREE.Material).dispose();
+      disposeObject(marker);
     });
     markers.clear();
 
@@ -237,14 +413,48 @@ export const createSceneController: SceneDriverFactory = ({
       existing.position.copy(point);
       return;
     }
-    const marker = new THREE.Mesh(
-      new THREE.SphereGeometry(0.13, 20, 12),
+    const color = markerMode === "place-start" ? 0xc7f04b : 0xf4ede0;
+    const marker = new THREE.Group();
+    const core = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.11, 0),
       new THREE.MeshBasicMaterial({
-        color: markerMode === "place-start" ? 0xc7f04b : 0xf4ede0,
+        color,
         depthTest: false,
       }),
     );
-    marker.renderOrder = 20;
+    core.position.y = 0.57;
+    core.renderOrder = 24;
+    marker.add(core);
+
+    const stem = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.012, 0.012, 0.46, 6),
+      new THREE.MeshBasicMaterial({
+        color,
+        depthTest: false,
+        depthWrite: false,
+        opacity: 0.78,
+        transparent: true,
+      }),
+    );
+    stem.position.y = 0.3;
+    stem.renderOrder = 23;
+    marker.add(stem);
+
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(0.17, 0.23, 32),
+      new THREE.MeshBasicMaterial({
+        color,
+        depthTest: false,
+        depthWrite: false,
+        opacity: 0.9,
+        side: THREE.DoubleSide,
+        transparent: true,
+      }),
+    );
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.04;
+    ring.renderOrder = 22;
+    marker.add(ring);
     marker.position.copy(point);
     scene.add(marker);
     markers.set(markerMode, marker);
@@ -260,8 +470,7 @@ export const createSceneController: SceneDriverFactory = ({
       if (!point) {
         if (existing) {
           scene.remove(existing);
-          existing.geometry.dispose();
-          (existing.material as THREE.Material).dispose();
+          disposeObject(existing);
           markers.delete(markerMode);
         }
         return;
@@ -407,46 +616,126 @@ export const createSceneController: SceneDriverFactory = ({
 
     setOverlay(overlay) {
       clearOverlay();
-      if (!overlay || overlay.path.length < 2) {
+      if (!overlay) {
         return;
       }
       const color = overlay.tone === "pass" ? 0xc7f04b : 0xff5c35;
-      routeLine = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(
-          overlay.path.map(
-            (point) => new THREE.Vector3(point.x, point.y + 0.08, point.z),
-          ),
-        ),
-        new THREE.LineBasicMaterial({
-          color,
-          depthTest: false,
-          transparent: true,
-          opacity: 0.96,
-        }),
-      );
-      routeLine.renderOrder = 18;
-      scene.add(routeLine);
-
-      if (overlay.failureLocation) {
-        failureMarker = new THREE.Mesh(
-          new THREE.RingGeometry(0.22, 0.34, 32),
-          new THREE.MeshBasicMaterial({
-            color: 0xff5c35,
-            depthTest: false,
-            transparent: true,
-            opacity: 0.92,
-            side: THREE.DoubleSide,
-          }),
-        );
-        failureMarker.rotation.x = -Math.PI / 2;
-        failureMarker.position.set(
-          overlay.failureLocation.x,
-          overlay.failureLocation.y + 0.09,
-          overlay.failureLocation.z,
-        );
-        failureMarker.renderOrder = 19;
+      failureMarker = createFailureBeacon(overlay);
+      if (failureMarker) {
         scene.add(failureMarker);
       }
+      if (overlay.path.length >= 2) {
+        const corridor = buildClearanceCorridor(
+          overlay.path,
+          overlay.clearanceWidthMeters,
+        );
+        if (corridor.centerline.length < 2) {
+          return;
+        }
+        routeRoot = new THREE.Group();
+        routeRoot.add(createCorridorRibbon(corridor.stations, color));
+        routeRoot.add(
+          createTube(corridor.centerline, {
+            color: 0x0c0f0d,
+            opacity: 0.92,
+            radius: 0.048,
+            renderOrder: 18,
+          }),
+          createTube(corridor.centerline, {
+            color,
+            radius: 0.024,
+            renderOrder: 19,
+          }),
+          createTube(corridor.leftRail, {
+            color,
+            opacity: 0.88,
+            radius: 0.012,
+            renderOrder: 19,
+          }),
+          createTube(corridor.rightRail, {
+            color,
+            opacity: 0.88,
+            radius: 0.012,
+            renderOrder: 19,
+          }),
+        );
+        corridor.gates.forEach((gate) => {
+          routeRoot?.add(
+            createTube([gate.left, gate.right], {
+              color,
+              opacity: 0.72,
+              radius: 0.008,
+              renderOrder: 19,
+            }),
+          );
+        });
+        corridor.gates
+          .filter(
+            (_gate, index) =>
+              index % 2 === 0 || index === corridor.gates.length - 1,
+          )
+          .forEach((gate) => {
+            const leftTop = {
+              ...gate.left,
+              y: gate.left.y + overlay.clearanceHeightMeters,
+            };
+            const rightTop = {
+              ...gate.right,
+              y: gate.right.y + overlay.clearanceHeightMeters,
+            };
+            [
+              [gate.left, leftTop],
+              [leftTop, rightTop],
+              [rightTop, gate.right],
+            ].forEach((segment) => {
+              routeRoot?.add(
+                createTube(segment, {
+                  color,
+                  opacity: 0.46,
+                  radius: 0.007,
+                  renderOrder: 18,
+                }),
+              );
+            });
+          });
+
+        routeScan = new THREE.Group();
+        const scanCore = new THREE.Mesh(
+          new THREE.SphereGeometry(0.055, 12, 8),
+          new THREE.MeshBasicMaterial({
+            color: 0xf8ffe3,
+            depthTest: false,
+            depthWrite: false,
+          }),
+        );
+        scanCore.renderOrder = 22;
+        routeScan.add(scanCore);
+        const scanRing = new THREE.Mesh(
+          new THREE.TorusGeometry(0.1, 0.012, 6, 24),
+          new THREE.MeshBasicMaterial({
+            color,
+            depthTest: false,
+            depthWrite: false,
+            transparent: true,
+            opacity: 0.92,
+          }),
+        );
+        scanRing.rotation.x = Math.PI / 2;
+        scanRing.renderOrder = 21;
+        routeScan.add(scanRing);
+        routeScanCurve = new THREE.CatmullRomCurve3(
+          corridor.centerline.map(
+            (point) => new THREE.Vector3(point.x, point.y + 0.025, point.z),
+          ),
+          false,
+          "centripetal",
+        );
+        routeScan.position.copy(routeScanCurve.getPointAt(reduceMotion ? 0.5 : 0));
+        routeRoot.add(routeScan);
+        routeStartedAt = performance.now();
+        scene.add(routeRoot);
+      }
+
     },
 
     dispose() {

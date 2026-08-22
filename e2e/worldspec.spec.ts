@@ -5,6 +5,8 @@ import {
   type Page,
 } from "@playwright/test";
 
+import { worldAssetsSchema } from "@/lib/worldlabs/schemas";
+
 async function reusePreparedDemo(
   page: Page,
   request: APIRequestContext,
@@ -14,12 +16,16 @@ async function reusePreparedDemo(
     !demoResponse.ok(),
     "DEMO_WORLD_ID and World Labs access are required for the live journey.",
   );
-  const demoBody = await demoResponse.text();
+  const demoWorld = worldAssetsSchema.parse(await demoResponse.json());
+  const interactiveWorld = {
+    ...demoWorld,
+    splatUrl: demoWorld.availableSplats.interactive,
+  };
   await page.route("**/api/worlds/demo", (route) =>
     route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: demoBody,
+      body: JSON.stringify(interactiveWorld),
     }),
   );
 }
@@ -28,7 +34,7 @@ test("proves the prepared Marble route through the visible workflow", async ({
   page,
   request,
 }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(360_000);
   await reusePreparedDemo(page, request);
 
   await page.goto("/");
@@ -38,8 +44,15 @@ test("proves the prepared Marble route through the visible workflow", async ({
   ).toBeVisible();
   await expect(page.locator("canvas[data-worldspec-viewer='true']")).toHaveCount(
     1,
+    { timeout: 60_000 },
   );
-  await expect(page.getByText("Scene ready")).toBeVisible({ timeout: 120_000 });
+  await expect(page.getByText("WorldSpec Orbital Greenhouse")).toBeVisible({
+    timeout: 120_000,
+  });
+  await expect(page.getByText("1 geometry layers")).toBeVisible({
+    timeout: 180_000,
+  });
+  await expect(page.getByText("Scene ready")).toBeVisible();
   await expect(page.getByRole("link", { name: "Open in Marble" })).toBeVisible();
 
   await page.getByRole("button", { name: "Load verified route" }).click();
@@ -65,7 +78,7 @@ test("proves the prepared Marble route through the visible workflow", async ({
   await page.getByRole("button", { name: "Run spatial test" }).click();
 
   await expect(page.getByText("Contract verified")).toBeVisible({
-    timeout: 60_000,
+    timeout: 120_000,
   });
   await expect(page.getByText("6.3 m", { exact: true })).toBeVisible();
   await expect(page.getByText("2.22 m")).toBeVisible();
@@ -79,13 +92,17 @@ test("keeps every scene control readable on a phone viewport", async ({
   page,
   request,
 }) => {
+  test.setTimeout(180_000);
   await reusePreparedDemo(page, request);
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
+  await expect(page.getByText("WorldSpec Orbital Greenhouse")).toBeVisible({
+    timeout: 120_000,
+  });
   const controls = page.locator(".scene-actions button");
-  await expect(controls).toHaveCount(4, { timeout: 120_000 });
+  await expect(controls).toHaveCount(4);
 
   for (const control of await controls.all()) {
     const box = await control.boundingBox();
