@@ -2,6 +2,7 @@
 
 import {
   type ComponentType,
+  type SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -90,12 +91,29 @@ export function Workspace({
   const runSequence = useRef(0);
   const generationController = useRef<AbortController | null>(null);
 
-  const handleColliderReady = useCallback((data: ColliderSceneData) => {
-    setCollider(data);
-    setPhase((current) =>
-      current === "loading-world" ? "placing-start" : current,
-    );
-  }, []);
+  const invalidateAnalysis = useCallback(
+    (nextPhase: SetStateAction<WorkspacePhase>) => {
+      runSequence.current += 1;
+      setReport(null);
+      setAnalysisError(null);
+      setPhase(nextPhase);
+    },
+    [],
+  );
+
+  const handleColliderReady = useCallback(
+    (data: ColliderSceneData) => {
+      invalidateAnalysis((current) =>
+        current === "loading-world"
+          ? "placing-start"
+          : current === "analyzing" || current === "pass" || current === "fail"
+            ? "ready"
+            : current,
+      );
+      setCollider(data);
+    },
+    [invalidateAnalysis],
+  );
 
   useEffect(() => {
     if (initialAssets !== undefined) {
@@ -105,10 +123,10 @@ export function Workspace({
     const controller = new AbortController();
     void loadDemo(controller.signal)
       .then((world) => {
+        invalidateAnalysis("loading-world");
         setAssets(world);
         setCollider(null);
         setSourceMessage(null);
-        setPhase("loading-world");
       })
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === "AbortError") {
@@ -119,7 +137,7 @@ export function Workspace({
       });
 
     return () => controller.abort();
-  }, [initialAssets, loadDemo]);
+  }, [initialAssets, invalidateAnalysis, loadDemo]);
 
   useEffect(
     () => () => {
@@ -149,13 +167,11 @@ export function Workspace({
         if (controller.signal.aborted || !operation.world) {
           return;
         }
+        invalidateAnalysis("loading-world");
         setAssets(operation.world);
         setCollider(null);
         setContract((current) => ({ ...current, start: null, goal: null }));
-        setReport(null);
-        setAnalysisError(null);
         setGenerationProgress("Generated world ready for inspection");
-        setPhase("loading-world");
       } catch (error) {
         if (controller.signal.aborted) {
           return;
@@ -172,18 +188,26 @@ export function Workspace({
         }
       }
     },
-    [generate],
+    [generate, invalidateAnalysis],
   );
 
   const clearResult = useCallback(() => {
-    runSequence.current += 1;
-    setReport(null);
-    setAnalysisError(null);
-    setPhase("placing-start");
-  }, []);
+    invalidateAnalysis("placing-start");
+  }, [invalidateAnalysis]);
 
   const handlePointSelected = useCallback(
     (event: Parameters<NonNullable<WorldViewerProps["onPointSelected"]>>[0]) => {
+      const hasBothPoints =
+        event.mode === "place-start"
+          ? Boolean(contract.goal)
+          : Boolean(contract.start);
+      invalidateAnalysis(
+        hasBothPoints
+          ? "ready"
+          : event.mode === "place-start"
+            ? "placing-goal"
+            : "placing-start",
+      );
       setContract((current) => ({
         ...current,
         ...(event.mode === "place-start"
@@ -191,34 +215,22 @@ export function Workspace({
           : { goal: event.point }),
       }));
       setInteractionMode("inspect");
-      setReport(null);
-      setAnalysisError(null);
-      setPhase(() => {
-        const hasBothPoints =
-          event.mode === "place-start"
-            ? Boolean(contract.goal)
-            : Boolean(contract.start);
-        if (hasBothPoints) {
-          return "ready";
-        }
-        return event.mode === "place-start" ? "placing-goal" : "placing-start";
-      });
     },
-    [contract.goal, contract.start],
+    [contract.goal, contract.start, invalidateAnalysis],
   );
 
   const handleRequirementChange = useCallback((value: string) => {
+    invalidateAnalysis(contract.start && contract.goal && collider ? "ready" : phase);
     setContract((current) => ({
       ...compileRequirement(value, current.agent),
       start: current.start,
       goal: current.goal,
     }));
-    setReport(null);
-    setAnalysisError(null);
-  }, []);
+  }, [collider, contract.goal, contract.start, invalidateAnalysis, phase]);
 
   const handleMetricChange = useCallback(
     (field: "height" | "width" | "slope" | "step", value: number) => {
+      invalidateAnalysis(contract.start && contract.goal && collider ? "ready" : phase);
       setContract((current) => {
         if (field === "width") {
           return {
@@ -237,10 +249,8 @@ export function Workspace({
           agent: { ...current.agent, [fieldMap[field]]: value },
         };
       });
-      setReport(null);
-      setAnalysisError(null);
     },
-    [],
+    [collider, contract.goal, contract.start, invalidateAnalysis, phase],
   );
 
   const canRun = Boolean(contract.start && contract.goal && collider);
@@ -259,6 +269,7 @@ export function Workspace({
       return;
     }
     const explorer = scenario.profiles[0];
+    invalidateAnalysis("ready");
     setContract((current) => ({
       ...current,
       start: scenario.route.start,
@@ -270,10 +281,7 @@ export function Workspace({
       },
     }));
     setInteractionMode("inspect");
-    setReport(null);
-    setAnalysisError(null);
-    setPhase("ready");
-  }, [scenario]);
+  }, [invalidateAnalysis, scenario]);
 
   const handleRun = useCallback(async () => {
     if (!contract.start || !contract.goal || !collider) {

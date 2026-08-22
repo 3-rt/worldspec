@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 
@@ -57,6 +57,14 @@ function FakeViewer({
       ) : null}
     </div>
   );
+}
+
+function createDeferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((next) => {
+    resolve = next;
+  });
+  return { promise, resolve };
 }
 
 async function placeEndpoints(user: ReturnType<typeof userEvent.setup>) {
@@ -241,5 +249,89 @@ describe("Workspace", () => {
     expect(await screen.findByText("Clearance fails")).toBeVisible();
     expect(screen.getByText("0.60 m measured")).toBeVisible();
     expect(screen.getByText("0.70 m required")).toBeVisible();
+  });
+
+  test("discards an analysis completed after the requirement changes", async () => {
+    const user = userEvent.setup();
+    const analysis = createDeferred<AnalysisReport>();
+
+    render(
+      <Workspace
+        initialAssets={null}
+        ViewerComponent={FakeViewer}
+        analyze={() => analysis.promise}
+      />,
+    );
+
+    await placeEndpoints(user);
+    await user.click(
+      screen.getByRole("button", { name: "Run spatial test" }),
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: "Movement requirement" }),
+      " The route must also support a scout.",
+    );
+
+    await act(async () => {
+      analysis.resolve(passingReport);
+      await analysis.promise;
+    });
+
+    expect(screen.getByText("Awaiting a route")).toBeVisible();
+    expect(screen.queryByText("Contract verified")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Run spatial test" }),
+    ).toBeEnabled();
+  });
+
+  test("discards an analysis completed after the active world changes", async () => {
+    const user = userEvent.setup();
+    const analysis = createDeferred<AnalysisReport>();
+    const preparedWorld = {
+      ...normalizeWorld(worldResponseFixture.world),
+      worldId: "90307e9c-afa8-47f9-9182-68ff5846378f",
+    };
+    const generatedWorld = {
+      ...preparedWorld,
+      worldId: "world-456",
+      displayName: "Generated Passage",
+    };
+
+    render(
+      <Workspace
+        initialAssets={preparedWorld}
+        ViewerComponent={FakeViewer}
+        analyze={() => analysis.promise}
+        generate={async () => ({
+          operationId: "operation-456",
+          done: true,
+          status: "SUCCEEDED",
+          description: "World generation completed successfully",
+          worldId: "world-456",
+          error: null,
+          world: generatedWorld,
+        })}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: "Load verified route" }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Run spatial test" }),
+    );
+    await user.click(screen.getByText("Generate another world"));
+    await user.click(
+      screen.getByRole("button", { name: "Generate with Marble" }),
+    );
+    expect(await screen.findByText("World: Generated Passage")).toBeVisible();
+
+    await act(async () => {
+      analysis.resolve(passingReport);
+      await analysis.promise;
+    });
+
+    expect(screen.getByText("Awaiting a route")).toBeVisible();
+    expect(screen.queryByText("Contract verified")).not.toBeInTheDocument();
   });
 });
