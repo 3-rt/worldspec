@@ -27,7 +27,7 @@ The first target user is a technical artist or level designer reviewing an AI-ge
 ## What it does
 
 1. Loads a persistent world generated with World Labs Marble.
-2. Renders the 500k Gaussian splat and its collider in one aligned Three.js scene.
+2. Renders the full-resolution Gaussian splat and its collider in one aligned Three.js scene, with a 500K visual fallback.
 3. Compiles natural-language dimensions into a deterministic movement contract.
 4. Lets the user place an entrance and destination, or load a verified proof route.
 5. Builds an avatar-aware Recast navigation mesh from the real Marble collider.

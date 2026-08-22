@@ -69,7 +69,7 @@ Generated 3D worlds can look finished while hiding disconnected floors, invalid 
 
 Most world-model demos stop when a generated scene looks convincing. WorldSpec starts with the production question that comes next: can the intended user actually move through it?
 
-WorldSpec is a spatial QA instrument for technical artists and level designers working with generated environment art. It resolves a persistent World Labs Marble world, renders the 500k SPZ Gaussian splat, and loads the paired collider GLB as physical evidence. Those two exports are aligned in metric space through Marble's scale and ground metadata plus an explicit OpenCV-to-Three.js coordinate conversion.
+WorldSpec is a spatial QA instrument for technical artists and level designers working with generated environment art. It resolves a persistent World Labs Marble world, renders the full-resolution SPZ Gaussian splat, and loads the paired collider GLB as physical evidence. Those two exports are aligned in metric space through Marble's scale and ground metadata plus an explicit OpenCV-to-Three.js coordinate conversion.
 
 The creator writes a movement requirement such as a 1.8 m-tall, 0.7 m-wide player travelling from an entrance to a platform without jumping. WorldSpec compiles that sentence into deterministic height, radius, slope, step, and clearance constraints. It builds a body-specific Recast navigation mesh from the actual Marble collider, projects the selected endpoints, verifies connected reachability, samples the route envelope with paired ray tests, and overlays the result directly on the generated world.
 
@@ -86,7 +86,7 @@ Visual plausibility does not prove spatial usability. Generated environments can
 ## How the solution works
 
 1. Resolve a prepared Marble world through a server-only World API client.
-2. Render its 500k Gaussian splat and collider GLB in one aligned metric scene.
+2. Render its full-resolution Gaussian splat and collider GLB in one aligned metric scene.
 3. Compile natural-language measurements into a deterministic movement contract.
 4. Place route endpoints or load the reproducible proof route.
 5. Build an avatar-aware Recast navigation surface from the collider.

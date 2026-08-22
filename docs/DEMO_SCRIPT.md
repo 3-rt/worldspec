@@ -1,51 +1,68 @@
-# WorldSpec Demo Script
+# WorldSpec real-time demo
 
-Final cut: 2:22.83. Section headings retain pre-edit recording timestamps.
+Target final runtime: 2:15 to 2:35. Hard limit: under 3:00.
 
-## 0:00-0:18 - Problem and uniqueness
+Every visual in the final edit should come from real-time screen footage. Record the screen without a microphone, then record the narration separately.
 
-"Most world-model demos stop when a scene looks convincing. Production starts one step later: can the intended user actually use it? For generated environment art, beautiful and usable are different requirements. WorldSpec gives technical artists and level designers that missing spatial QA test."
+## Before recording
 
-Show the title and the full workspace.
+1. Use a current Chrome browser with hardware acceleration enabled.
+2. Open `https://worldspec.vercel.app` at 100 percent browser zoom.
+3. Wait until the source panel says `SPZ Full`, the viewer says `Scene ready`, and the footer says `1 geometry layers`.
+4. Hide the bookmarks bar and close any download shelf or browser pop-up.
+5. Click the collider control until it reads `Hidden`.
+6. Orbit to the overhead greenhouse angle: the doorway should be at the far centre, the cross-shaped path should fill the viewport, and the planters should be visible on both sides.
+7. Use macOS `Command + Shift + 5` to record only the browser content. Keep the microphone off.
 
-## 0:18-0:42 - World Labs as the source of truth
+## Screen recording shot list
 
-"This orbital greenhouse was generated with World Labs Marble. Marble provides two synchronized representations. The Gaussian splat is the world the creator sees. The paired collider is what WorldSpec tests."
+Record these as three separate clips. Leave two seconds of stillness at the beginning and end of each clip so they are easy to edit.
 
-Orbit the scene. Toggle Collider off, then on.
+### Clip 1: world and integration, 25 to 35 seconds
 
-"Marble's metric metadata keeps the artwork and test geometry aligned."
+- Begin at the clear overhead greenhouse angle with the collider hidden.
+- Orbit slowly for about eight seconds.
+- Toggle the collider on, pause for three seconds, then hide it again.
+- Click `Load proof route` and pause with both anchors visible.
 
-## 0:42-1:12 - Contract and proof route
+### Clip 2: live failure and pass, 65 to 85 seconds
 
-"A creator writes the functional requirement in plain language. This player is 1.8 metres tall and 0.7 metres wide, travelling from the entrance to the platform without jumping. WorldSpec compiles the sentence into explicit body, slope, step, and clearance constraints."
+- Change the movement requirement from `0.7 m wide` to `1.4 m wide`.
+- Pause until the width field visibly updates to `1.4`.
+- Click `Run spatial test` and wait for `Destination is invalid`.
+- Hold the failure result for five seconds.
+- Change only the width back to `0.7 m wide`.
+- Click `Run spatial test` and wait for `Contract verified`.
+- Hold the passing result for eight seconds.
 
-Click **Load proof route**. Point out the two visible anchors and their coordinates.
+### Clip 3: verified result, 15 to 25 seconds
 
-"You can place these manually on any collider surface. I am loading a verified pair so this demo is reproducible."
+- Keep `Contract verified` and the evidence measurements visible.
+- Orbit very slowly around the overhead angle while keeping the green route in view.
+- End with the route, `6.3 m`, and `2.22 m` all readable.
 
-## 1:12-1:50 - Visible failure
+## Narration script
 
-Replace the sentence with a `1.4 m wide` service-robot requirement. Confirm the width field updates, then run the spatial test.
+Record this as one Voice Memos take in a quiet room. Speak naturally and leave about one second between paragraphs. Do not try to match the screen while recording. The edit will handle timing.
 
-"Now the intended user is a 1.4 metre-wide service robot. WorldSpec rebuilds the Recast navigation surface for that body, projects both anchors, and checks connected reachability."
+> This is a persistent 3D world generated with World Labs Marble. It looks like a finished orbital greenhouse, but a level designer still needs to know whether a player or robot can actually move through it. I built WorldSpec to run that check.
+>
+> Marble provides two versions of the same world. The full-resolution Gaussian splat is the space the creator sees. The paired collider is the geometry WorldSpec can test. Marble's scale and ground metadata keep both versions aligned in metres.
+>
+> A creator writes a concrete movement requirement. For this test, a 1.8 metre-tall service robot needs to travel from the entrance to the platform without jumping. I am loading the same two route anchors each time so the comparison is reproducible.
+>
+> First, I set the robot's width to 1.4 metres. WorldSpec converts that requirement into body, slope, step, and clearance constraints. Recast rebuilds the navigation surface for that body and checks both anchors. The destination is invalid for this larger robot, so the test fails and identifies exactly where it fails.
+>
+> Now I change only the width to 0.7 metres. The world and route anchors stay the same. This time Recast finds a connected 6.3 metre route. WorldSpec samples the route against the Marble collider and measures 2.22 metres of minimum clearance. The route appears in green and the contract passes.
+>
+> The World Labs API key stays on the server. The browser receives fresh SPZ and GLB asset URLs, then Three.js, Spark, Recast, and deterministic ray tests produce the result. I built the full pipeline solo during Ignition Hacks.
+>
+> WorldSpec gives technical artists and level designers a QA step between generating a world and shipping it. The same check can extend to games, robot simulation, and accessibility-sensitive spatial design.
 
-Pause on the orange evidence state.
+## Files to send for editing
 
-"The same destination is no longer valid for this larger agent. The evidence panel identifies the invalid destination so the level designer knows what failed."
+- The three original screen recordings, without recompression
+- One Voice Memos narration file, preferably `.m4a` or lossless audio
+- Optional: one alternate narration take if a sentence felt rushed
 
-## 1:50-2:25 - Passing result and technical proof
-
-Restore the `0.7 m wide` explorer requirement and run again.
-
-"For the explorer profile, Recast finds a 6.3 metre connected route. WorldSpec then samples the route envelope against the actual Marble collider and draws the verified path in acid lime. Minimum clearance is 2.22 metres."
-
-Point out route length, minimum clearance, and compute time.
-
-"The API key stays server-only. The browser receives fresh asset URLs, then Three.js, Spark, Recast, and deterministic ray tests produce the evidence you see here."
-
-## 2:25-2:38 - Impact and close
-
-"WorldSpec uses Marble's visual and physical outputs to check generated places for players, robots, and accessibility needs. It is the QA layer between generated environment art and a world someone can use."
-
-End on the pass evidence and the WorldSpec wordmark.
+The final edit will use only moving screen footage, synchronize the narration, trim loading delays, normalize the voice track, add restrained labels, and export a 1080p H.264 video at 30 FPS.

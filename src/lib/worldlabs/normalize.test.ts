@@ -13,7 +13,7 @@ describe("normalizeWorld", () => {
         "An orbital greenhouse with connected paths and a narrow maintenance passage.",
       marbleUrl: "https://marble.worldlabs.ai/world/world-123",
       thumbnailUrl: "https://assets.example.test/world-123-thumbnail.webp",
-      splatUrl: "https://assets.example.test/world-123-500k.spz",
+      splatUrl: "https://assets.example.test/world-123-full.spz",
       availableSplats: {
         preview: "https://assets.example.test/world-123-100k.spz",
         interactive: "https://assets.example.test/world-123-500k.spz",
@@ -27,7 +27,31 @@ describe("normalizeWorld", () => {
     });
   });
 
-  test("rejects a world without the interactive SPZ asset", () => {
+  test("falls back to the interactive SPZ when full resolution is unavailable", () => {
+    const response = {
+      ...worldResponseFixture.world,
+      assets: {
+        ...worldResponseFixture.world.assets,
+        splats: {
+          ...worldResponseFixture.world.assets.splats,
+          spz_urls: {
+            ...worldResponseFixture.world.assets.splats.spz_urls,
+            full_res: "",
+          },
+        },
+      },
+    };
+
+    expect(normalizeWorld(response)).toMatchObject({
+      splatUrl: "https://assets.example.test/world-123-500k.spz",
+      availableSplats: {
+        interactive: "https://assets.example.test/world-123-500k.spz",
+        full: null,
+      },
+    });
+  });
+
+  test("rejects a world without a full or interactive SPZ asset", () => {
     const response = {
       ...worldResponseFixture.world,
       assets: {
@@ -37,6 +61,7 @@ describe("normalizeWorld", () => {
           spz_urls: {
             ...worldResponseFixture.world.assets.splats.spz_urls,
             "500k": "",
+            full_res: "",
           },
         },
       },

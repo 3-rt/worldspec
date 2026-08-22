@@ -23,6 +23,11 @@ export function GenerationPanel({
   onGenerate,
 }: GenerationPanelProps) {
   const [prompt, setPrompt] = useState(DEFAULT_WORLD_PROMPT);
+  const visualLabel = !assets
+    ? "Synthetic"
+    : assets.availableSplats.full === assets.splatUrl
+      ? "SPZ Full"
+      : "SPZ 500K";
 
   return (
     <section className="rail-section source-section" aria-labelledby="source-title">
@@ -44,7 +49,7 @@ export function GenerationPanel({
       <dl className="source-metadata">
         <div>
           <dt>Visual</dt>
-          <dd>{assets ? "SPZ 500K" : "Synthetic"}</dd>
+          <dd>{visualLabel}</dd>
         </div>
         <div>
           <dt>Geometry</dt>
