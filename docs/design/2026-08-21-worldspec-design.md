@@ -126,7 +126,7 @@ The 3D scene is the dominant surface. The user can toggle the visual splat, tran
 
 ### Result state
 
-The scene displays a green route for a pass. A failure uses a red route segment or marker at the most informative detected obstruction. The result panel states what was tested, what passed, what failed, and the relevant measurements.
+The scene displays a measured green width-and-height corridor for a pass, with a scan marker that stays fixed when reduced motion is requested. A failure marks the most informative detected obstruction with a red beacon. The result panel states what was tested, what passed, what failed, and the relevant measurements.
 
 The interface should feel like a spatial engineering instrument, not a generic AI chat application. Natural language is an input convenience, while the 3D evidence is the product.
 

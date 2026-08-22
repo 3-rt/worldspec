@@ -29,7 +29,7 @@ WorldSpec loads a persistent World Labs Marble world and renders the SPZ Gaussia
 
 ### How we built it
 
-I built the app with Next.js 16, React 19, TypeScript, and Zod. The server keeps the World Labs API key private, resolves a stable Marble world ID, and refreshes expiring SPZ and GLB URLs. Three.js and Spark render the Gaussian splat. The collider goes through an explicit OpenCV-to-Three.js axis conversion, with Marble's scale and ground metadata applied to keep both views in the same metric space. Recast Navigation builds a mesh for the current body dimensions, and paired Three.js ray tests measure clearance. I used Vitest and Testing Library for 66 unit and component tests, plus three Playwright browser flows, then deployed it on Vercel.
+I built the app with Next.js 16, React 19, TypeScript, and Zod. The server keeps the World Labs API key private, resolves a stable Marble world ID, and refreshes expiring SPZ and GLB URLs. Three.js and Spark render the Gaussian splat. The collider goes through an explicit OpenCV-to-Three.js axis conversion, with Marble's scale and ground metadata applied to keep both views in the same metric space. Recast Navigation builds a mesh for the current body dimensions, and paired Three.js ray tests measure clearance. I used Vitest and Testing Library for unit and component coverage, plus three Playwright browser flows, then deployed it on Vercel.
 
 ### Challenges we ran into
 
