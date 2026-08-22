@@ -6,7 +6,7 @@
 
 **Architecture:** A Next.js App Router application keeps World Labs credentials in server-only route handlers and runs the interactive Three.js, Spark, and Recast workflow in the browser. Domain parsing, coordinate transforms, route classification, and clearance measurement live in focused framework-independent modules with deterministic tests. The reliable demo path resolves a pre-generated world ID through the API, while live generation is an additional supported path.
 
-**Tech Stack:** Node.js 22 or newer, npm 10, Next.js 16.3.2, React 19.2.8, TypeScript, Three.js 0.185.1, Spark 2.1.0, Recast Navigation 0.43.1, Zod, Vitest 4.1.11, Testing Library, Playwright 1.62.1, ESLint, and CSS.
+**Tech Stack:** Node.js 24.19 LTS, npm 11, Next.js 16.3.2, React 19.2.8, TypeScript, Three.js 0.185.1, Spark 2.1.0, Recast Navigation 0.43.1, Zod, Vitest 4.1.11, Testing Library, Playwright 1.62.1, ESLint, and CSS.
 
 **Spec:** `docs/design/2026-08-21-worldspec-design.md`
 
@@ -92,7 +92,7 @@
 - Consumes: approved design and submission facts.
 - Produces: `npm run dev`, `npm run test`, `npm run test:e2e`, `npm run lint`, `npm run typecheck`, `npm run build`, a server-rendered shell, and safe environment names.
 
-- [ ] **Step 1: Create the feature branch and configuration**
+- [x] **Step 1: Create the feature branch and configuration**
 
 Run `git switch -c feat/worldspec-mvp`. Configure exact scripts, TypeScript strict mode, `@/` alias, Vitest `jsdom`, Testing Library cleanup, ESLint, and Playwright desktop Chromium on port 3000. Set `.env.example` to:
 
@@ -105,7 +105,7 @@ DEMO_WORLD_ID=
 
 Install the versions in the header and verify `npm audit --omit=dev` has no high or critical runtime findings.
 
-- [ ] **Step 2: Write the failing shell test**
+- [x] **Step 2: Write the failing shell test**
 
 ```tsx
 import { render, screen } from "@testing-library/react";
@@ -119,15 +119,15 @@ test("introduces WorldSpec as spatial QA rather than world generation", () => {
 });
 ```
 
-- [ ] **Step 3: Verify red**
+- [x] **Step 3: Verify red**
 
 Run `npm test -- src/app/page.test.tsx`. Expect failure because `page.tsx` is absent.
 
-- [ ] **Step 4: Implement the minimal shell**
+- [x] **Step 4: Implement the minimal shell**
 
 Use Archivo and Fragment Mono through `next/font/google`. Render the required `main`, `h1`, thesis, and `Workspace initializing` status. Establish color, typography, focus, reduced-motion, and viewport variables without building later controls.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run `npm test -- src/app/page.test.tsx`, `npm run lint`, `npm run typecheck`, and `npm run build`. Record exact evidence, next task, risks, and submission clock in `docs/HACKATHON_STATE.md`.
 
@@ -144,7 +144,7 @@ Commit with `git commit -m "build: establish WorldSpec application baseline"`.
 **Interfaces:**
 - Produces: `defaultAgentProfile`, Zod domain schemas, `compileRequirement(sourceText, baseAgent)`, and `summarizeReport(report)`.
 
-- [ ] **Step 1: Write failing compiler tests**
+- [x] **Step 1: Write failing compiler tests**
 
 Define desired defaults: radius `0.35`, height `1.8`, maximum slope `45`, step height `0.3`, and minimum clearance `0.7`. Assert:
 
@@ -161,15 +161,15 @@ expect(compileRequirement(
 
 Also prove missing measurements use the literal defaults.
 
-- [ ] **Step 2: Verify red, implement, and verify green**
+- [x] **Step 2: Verify red, implement, and verify green**
 
 Run `npm test -- src/features/analysis/requirement-parser.test.ts`. Implement metre unit normalization, height matching near `tall` or `height`, width matching near `wide` or `width`, width-to-radius conversion, and `without jumping` handling. Validate the returned value through `worldContractSchema`. Rerun until green.
 
-- [ ] **Step 3: Test and implement evidence copy**
+- [x] **Step 3: Test and implement evidence copy**
 
 First assert that measured clearance `0.42` against required `0.7` yields title `Clearance fails`, tone `fail`, and both values. Assert a passing 12.4 metre route yields `Contract verified`, tone `pass`, and `12.4 m`. Implement `summarizeReport` using the first failure as evidence.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run `npm test -- src/features/analysis`. Update state and commit with `git commit -m "feat: compile spatial requirements into test contracts"`.
 
@@ -185,23 +185,23 @@ Run `npm test -- src/features/analysis`. Update state and commit with `git commi
 **Interfaces:**
 - Produces: `WorldAssets`, `WorldOperation`, `createWorldLabsClient({ apiKey, baseUrl, fetch })`, world retrieval, generation, and operation polling routes.
 
-- [ ] **Step 1: Write a full sanitized fixture and failing normalization tests**
+- [x] **Step 1: Write a full sanitized fixture and failing normalization tests**
 
 Mirror every documented field used by the app. Use `https://assets.example.test/` URLs, `metric_scale_factor: 1.25`, and `ground_plane_offset: 0.4`. Assert the 500k SPZ and collider normalize into `WorldAssets`, while either missing asset returns `World assets are incomplete`.
 
-- [ ] **Step 2: Implement schemas and normalization**
+- [x] **Step 2: Implement schemas and normalization**
 
 Use Zod for nullable API metadata, require consumed assets, retain all SPZ resolutions, and never return credentials. Verify with `npm test -- src/lib/worldlabs/normalize.test.ts`.
 
-- [ ] **Step 3: Write failing injected-fetch client tests**
+- [x] **Step 3: Write failing injected-fetch client tests**
 
 Using real `Response` objects, prove `getWorld("world-123")` sends a GET to `/marble/v1/worlds/world-123` with `WLT-Api-Key`; `generateWorld` sends the documented `marble-1.1` text body; `getOperation` parses in-progress and complete operations; and HTTP 429 maps to code `rate-limited` without response bodies or credentials in its message.
 
-- [ ] **Step 4: Implement client, safe errors, and thin routes**
+- [x] **Step 4: Implement client, safe errors, and thin routes**
 
 Use one private request function with `cache: "no-store"`, schema validation, injected fetch, and bounded safe errors. Validate generation input as trimmed `{ displayName, prompt }` with a 1,500-character maximum. Routes serialize normalized results or `{ error: { code, message } }`.
 
-- [ ] **Step 5: Verify live read-only access and commit**
+- [x] **Step 5: Verify live read-only access and commit**
 
 Run all World Labs tests and typecheck. Call `POST /marble/v1/worlds:list` with `{}` using the configured key, printing only HTTP status and world count. Expect 200. Update state and commit with `git commit -m "feat: add secure World Labs API boundary"`.
 
@@ -216,7 +216,7 @@ Run all World Labs tests and typecheck. Call `POST /marble/v1/worlds:list` with 
 **Interfaces:**
 - Produces: metric transform functions, `SceneController`, `WorldViewer`, collider scene data, and point-selection events.
 
-- [ ] **Step 1: Write failing transform tests**
+- [x] **Step 1: Write failing transform tests**
 
 ```ts
 expect(toMetricPosition(
@@ -225,21 +225,21 @@ expect(toMetricPosition(
 )).toEqual({ x: 2.5, y: 3.35, z: 5 });
 ```
 
-Also assert uniform scale `1.25`, Y translation `-0.4`, X rotation `Math.PI`, and inverse round-trip tolerance `1e-6`.
+Also assert uniform scale `1.25`, direct Three.js object Y translation `+0.4`, X rotation `Math.PI`, and inverse round-trip tolerance `1e-6`. The positive object translation is the composed result of subtracting the offset before the 180-degree X-axis conversion.
 
-- [ ] **Step 2: Verify red, implement transforms, and verify green**
+- [x] **Step 2: Verify red, implement transforms, and verify green**
 
 Run `npm test -- src/features/viewer/world-transform.test.ts` before and after the pure implementation.
 
-- [ ] **Step 3: Write a failing viewer lifecycle test**
+- [x] **Step 3: Write a failing viewer lifecycle test**
 
 Inject a `SceneDriver`. Assert mount adds exactly one canvas, interaction mode changes reach the driver, unmount disposes it, and loading/errors are user-visible. Do not test Three.js internals.
 
-- [ ] **Step 4: Implement scene controller and synthetic world**
+- [x] **Step 4: Implement scene controller and synthetic world**
 
 The synthetic world contains a floor, raised goal, and narrow opening. The controller owns renderer, camera, orbit controls, Spark renderer, SplatMesh, collider, resize observer, raycaster, markers, route, failure marker, frame loop, and disposal. Spark loads dynamically in the browser. The collider is translucent with depth-aware edges.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run viewer and transform tests plus typecheck, with no browser-only code during server render. Update state and commit with `git commit -m "feat: render Marble worlds in a testable scene"`.
 
@@ -253,19 +253,19 @@ Run viewer and transform tests plus typecheck, with no browser-only code during 
 **Interfaces:**
 - Produces: `buildNavigationSurface(meshes, profile)`, `findRoute(surface, start, goal)`, and `analyzeWorld(input)`.
 
-- [ ] **Step 1: Write failing tests against real synthetic geometry**
+- [x] **Step 1: Write failing tests against real synthetic geometry**
 
 Initialize Recast. A broad floor must return a path from `(-4, 0, 0)` to `(4, 0, 0)` with endpoints within `0.25` metres. Disconnected floor islands must return `unreachable`.
 
-- [ ] **Step 2: Implement the Recast adapter**
+- [x] **Step 2: Implement the Recast adapter**
 
 Cache WASM initialization. Use `threeToSoloNavMesh` with profile-derived radius, height, slope, climb, cell size `0.15`, and cell height `0.1`. Return a narrow wrapper with `findNearestPoint`, `computePath`, and `destroy` rather than leaking Recast objects.
 
-- [ ] **Step 3: Test and implement orchestration**
+- [x] **Step 3: Test and implement orchestration**
 
 After the adapter is green, test invalid start, invalid goal, unreachable, and passing route reports. Project endpoints within `0.75` metres, calculate route length, return explicit failure locations, and destroy resources in `finally`.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run `npm test -- src/features/analysis`. Expect no WASM leaks or console errors. Update state and commit with `git commit -m "feat: verify world reachability with collider navigation"`.
 
@@ -278,19 +278,19 @@ Run `npm test -- src/features/analysis`. Expect no WASM leaks or console errors.
 **Interfaces:**
 - Produces: `measureRouteClearance(input)` and a visible failure location in `AnalysisReport`.
 
-- [ ] **Step 1: Write failing corridor tests**
+- [x] **Step 1: Write failing corridor tests**
 
 Use real Three.js walls around a straight route. A 2.0 metre corridor must measure within `0.1` of `2.0`. A section narrowing to `0.6` against required `0.7` must fail near that segment. No nearby walls returns `Infinity` and passes.
 
-- [ ] **Step 2: Implement deterministic sampling**
+- [x] **Step 2: Implement deterministic sampling**
 
 Resample every `0.2` metres. At avatar mid-height, cast paired horizontal rays in 16 directions bounded at 5 metres. The minimum sum of opposing hits is passage width. Record global minimum and the first sample below the threshold.
 
-- [ ] **Step 3: Integrate route evidence**
+- [x] **Step 3: Integrate route evidence**
 
 Run reachability first. A narrow route retains its path, returns `fail`, and includes measured and required values. Passing routes render acid-lime; failures render safety-orange with a pulsing ring at the recorded location.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run all analysis and viewer tests plus typecheck. Update state and commit with `git commit -m "feat: expose route clearance failures in space"`.
 
@@ -304,21 +304,21 @@ Run all analysis and viewer tests plus typecheck. Update state and commit with `
 **Interfaces:**
 - Produces: the complete setup, inspect, analyze, and result journey.
 
-- [ ] **Step 1: Write failing workflow tests**
+- [x] **Step 1: Write failing workflow tests**
 
 With only WebGL and API boundaries injected, prove: prepared demo opens with the example contract; `Set entrance` changes the instruction; both points enable `Run spatial test`; passing analysis displays `Contract verified`; failing analysis displays `Clearance fails` with both measurements.
 
-- [ ] **Step 2: Implement explicit workflow states**
+- [x] **Step 2: Implement explicit workflow states**
 
 Use `loading-world`, `placing-start`, `placing-goal`, `ready`, `analyzing`, `pass`, and `fail`. Keep one source of truth for contract and selections. Abort stale fetches and runs on world change.
 
-- [ ] **Step 3: Implement the intentional interface**
+- [x] **Step 3: Implement the intentional interface**
 
 Build an asymmetric desktop composition with numbered contract rail, dominant viewport, evidence ledger, and baseline status strip. Use surveying marks and hairline grids instead of generic cards. During analysis, briefly desaturate the viewport, pass one scan line across it, and resolve the route. Respect reduced motion.
 
 Below 900px, put the viewer first, controls in a horizontal step rail, and evidence in a bottom sheet. Use 44px targets, visible focus, non-color labels, and no page-level horizontal overflow.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run component tests, lint, typecheck, and production build with no hydration, accessibility, or lifecycle warnings. Update state and commit with `git commit -m "feat: complete the WorldSpec inspection workflow"`.
 
@@ -332,11 +332,11 @@ Run component tests, lint, typecheck, and production build with no hydration, ac
 **Interfaces:**
 - Produces: reliable demo resolution by ID, live prompt generation, bounded polling, and retry.
 
-- [ ] **Step 1: Test and implement the demo resolver**
+- [x] **Step 1: Test and implement the demo resolver**
 
 Blank world ID returns code `demo-not-configured`; a valid ID resolves through the normalizer. Store no CDN URL in configuration. Expose `GET /api/worlds/demo` backed by server-only `DEMO_WORLD_ID`.
 
-- [ ] **Step 2: Generate a purpose-built Marble world**
+- [x] **Step 2: Generate a purpose-built Marble world**
 
 Use this exact prompt:
 
@@ -350,7 +350,7 @@ Poll every 10 seconds. Record only operation ID, final world ID, duration, and s
 
 Compare three recognizable anchors while toggling collider visibility. Correct only `WorldTransform` if needed, and reproduce any correction with a failing test first.
 
-- [ ] **Step 4: Finish live generation and deterministic scenario**
+- [x] **Step 4: Finish live generation and deterministic scenario**
 
 Poll every five seconds for up to ten minutes with progress, retry, and `Open in Marble`. Keep the prepared demo usable during generation. Confirm one coordinate pair plus two profiles produce deterministic contrasting results. Store only safe points and profiles, not asset URLs.
 
