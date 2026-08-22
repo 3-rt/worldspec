@@ -78,7 +78,7 @@ The submission build is merged, deployed, and ready for HackHub. WorldSpec provi
 - General scoring: uniqueness, technical implementation, presentation and description, theme alignment, and impact and usefulness.
 - Best Solo Hack: technical execution, ambition for a solo effort, and polish and completion, each scored from 0 to 5.
 - Sponsor tracks: integration and creativity, scored from 0 to 5.
-- Demo priority: explicitly show why World Labs is indispensable, name technical artists and level designers as the first user, and make the 1.4 metre failure to 0.7 metre pass contrast visible.
+- Demo priority: show how WorldSpec uses both World Labs exports, name technical artists and level designers as the first user, and make the 1.4 metre failure to 0.7 metre pass contrast visible.
 
 ## Next action
 
