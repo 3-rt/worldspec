@@ -28,7 +28,7 @@
 ## Demo video
 
 - [x] Record using `docs/DEMO_SCRIPT.md`.
-- [x] Final duration is 2:45 or shorter.
+- [x] Final duration is 2:23 (2:22.83 exact), within the 2:45 limit.
 - [x] Show generated world, collider toggle, contract, route anchors, fail evidence, and pass evidence.
 - [x] Mention World Labs as the source of both the visual world and collider evidence.
 - [x] Upload video publicly.

@@ -1,6 +1,6 @@
 # WorldSpec Demo Script
 
-Final cut: 2:22.83
+Final cut: 2:22.83. Section headings retain pre-edit recording timestamps.
 
 ## 0:00-0:18 - Problem and uniqueness
 
