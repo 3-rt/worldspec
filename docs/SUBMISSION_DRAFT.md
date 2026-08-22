@@ -25,11 +25,11 @@ World-model demos usually end when the scene looks convincing. Technical artists
 
 ### What it does
 
-WorldSpec loads a persistent World Labs Marble world and renders the SPZ Gaussian splat with its paired collider GLB. A creator writes a movement requirement, such as a 1.8 metre-tall, 0.7 metre-wide player travelling from an entrance to a platform without jumping. WorldSpec turns those measurements into a body profile, builds a Recast navigation mesh from the collider, checks the two route anchors, and samples clearance along the path. It returns a visible pass or fail with the route and measurements overlaid in 3D. In the demo, a 1.4 metre-wide service robot fails at the destination. Changing the width to 0.7 metres produces a 6.3 metre route with 2.22 metres of minimum clearance.
+WorldSpec loads a persistent World Labs Marble world and renders the SPZ Gaussian splat with its paired collider GLB. A creator writes a movement requirement, such as a 1.8 metre-tall, 0.7 metre-wide player travelling from an entrance to a platform without jumping. WorldSpec turns those measurements into a body profile, builds a Recast navigation mesh from the collider, checks the two route anchors, and samples clearance along the path. It returns a visible pass or fail with the tested width and height drawn as a measured 3D corridor. In the demo, a 1.4 metre-wide service robot fails at the destination. Changing the width to 0.7 metres produces a 6.3 metre route with 2.22 metres of minimum clearance.
 
 ### How we built it
 
-I built the app with Next.js 16, React 19, TypeScript, and Zod. The server keeps the World Labs API key private, resolves a stable Marble world ID, and refreshes expiring SPZ and GLB URLs. Three.js and Spark render the Gaussian splat. The collider goes through an explicit OpenCV-to-Three.js axis conversion, with Marble's scale and ground metadata applied to keep both views in the same metric space. Recast Navigation builds a mesh for the current body dimensions, and paired Three.js ray tests measure clearance. I used Vitest, Testing Library, and Playwright for 59 tests, then deployed it on Vercel.
+I built the app with Next.js 16, React 19, TypeScript, and Zod. The server keeps the World Labs API key private, resolves a stable Marble world ID, and refreshes expiring SPZ and GLB URLs. Three.js and Spark render the Gaussian splat. The collider goes through an explicit OpenCV-to-Three.js axis conversion, with Marble's scale and ground metadata applied to keep both views in the same metric space. Recast Navigation builds a mesh for the current body dimensions, and paired Three.js ray tests measure clearance. I used Vitest and Testing Library for unit and component coverage, plus three Playwright browser flows, then deployed it on Vercel.
 
 ### Challenges we ran into
 
@@ -71,7 +71,7 @@ Most world-model demos stop when a generated scene looks convincing. WorldSpec s
 
 WorldSpec is a spatial QA instrument for technical artists and level designers working with generated environment art. It resolves a persistent World Labs Marble world, renders the full-resolution SPZ Gaussian splat, and loads the paired collider GLB as physical evidence. Those two exports are aligned in metric space through Marble's scale and ground metadata plus an explicit OpenCV-to-Three.js coordinate conversion.
 
-The creator writes a movement requirement such as a 1.8 m-tall, 0.7 m-wide player travelling from an entrance to a platform without jumping. WorldSpec compiles that sentence into deterministic height, radius, slope, step, and clearance constraints. It builds a body-specific Recast navigation mesh from the actual Marble collider, projects the selected endpoints, verifies connected reachability, samples the route envelope with paired ray tests, and overlays the result directly on the generated world.
+The creator writes a movement requirement such as a 1.8 m-tall, 0.7 m-wide player travelling from an entrance to a platform without jumping. WorldSpec compiles that sentence into deterministic height, radius, slope, step, and clearance constraints. It builds a body-specific Recast navigation mesh from the actual Marble collider, projects the selected endpoints, verifies connected reachability, samples the route envelope with paired ray tests, and draws the tested body as a measured width-and-height corridor directly on the generated world.
 
 In the prepared orbital-greenhouse demo, a 1.4 m-wide profile cannot use the selected destination. Restoring the 0.7 m explorer profile produces a 6.3 m route with 2.22 m minimum clearance. The evidence panel identifies the failed destination or reports the measured route and clearance.
 
@@ -92,7 +92,7 @@ Visual plausibility does not prove spatial usability. Generated environments can
 5. Build an avatar-aware Recast navigation surface from the collider.
 6. Verify endpoint validity and connected reachability.
 7. Sample lateral route clearance against the collider.
-8. Present pass or fail evidence in an evidence ledger and 3D overlay.
+8. Present pass or fail evidence in an evidence ledger and measured 3D corridor.
 
 ## Key technologies
 

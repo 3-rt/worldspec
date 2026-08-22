@@ -326,16 +326,27 @@ export function Workspace({
   }, [analyze, collider, contract]);
 
   const overlay = useMemo<WorldViewerProps["overlay"]>(() => {
-    if (!report || report.path.length < 2) {
+    if (!report) {
+      return null;
+    }
+    const failureLocation = report.failures.find(
+      (failure) => failure.location,
+    )?.location;
+    if (report.path.length < 2 && !failureLocation) {
       return null;
     }
     return {
       path: report.path,
       tone: report.status,
-      failureLocation: report.failures.find((failure) => failure.location)
-        ?.location,
+      clearanceHeightMeters: contract.agent.heightMeters,
+      clearanceWidthMeters: contract.minimumClearanceMeters,
+      failureLocation,
     };
-  }, [report]);
+  }, [
+    contract.agent.heightMeters,
+    contract.minimumClearanceMeters,
+    report,
+  ]);
 
   return (
     <main

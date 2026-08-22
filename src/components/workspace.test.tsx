@@ -17,6 +17,7 @@ function FakeViewer({
   assets,
   anchors,
   interactionMode,
+  overlay,
   onColliderReady,
   onPointSelected,
 }: WorkspaceViewerProps) {
@@ -29,6 +30,11 @@ function FakeViewer({
       <span>World: {assets?.displayName ?? "Synthetic"}</span>
       <span>Anchors: {anchors?.start && anchors.goal ? "yes" : "no"}</span>
       <span>Mode: {interactionMode}</span>
+      <span>
+        Overlay: {overlay
+          ? `${overlay.tone}/${overlay.path.length}/${overlay.clearanceWidthMeters}/${overlay.clearanceHeightMeters}/${overlay.failureLocation ? "failure" : "clear"}`
+          : "none"}
+      </span>
       {interactionMode === "place-start" ? (
         <button
           type="button"
@@ -111,6 +117,20 @@ const failingReport: AnalysisReport = {
     },
   ],
   elapsedMs: 28,
+};
+
+const invalidGoalReport: AnalysisReport = {
+  status: "fail",
+  path: [],
+  routeLengthMeters: 0,
+  failures: [
+    {
+      kind: "invalid-goal",
+      message: "The destination is not on a walkable surface.",
+      location: { x: 2, y: 0, z: 0 },
+    },
+  ],
+  elapsedMs: 16,
 };
 
 afterEach(() => {
@@ -248,6 +268,26 @@ describe("Workspace", () => {
     expect(await screen.findByText("Contract verified")).toBeVisible();
     expect(screen.getByText("5.0 m")).toBeVisible();
     expect(screen.getByText("1.40 m")).toBeVisible();
+    expect(screen.getByText("Overlay: pass/2/0.7/1.8/clear")).toBeVisible();
+  });
+
+  test("marks a failed destination even when navigation returns no path", async () => {
+    const user = userEvent.setup();
+    render(
+      <Workspace
+        initialAssets={null}
+        ViewerComponent={FakeViewer}
+        analyze={async () => invalidGoalReport}
+      />,
+    );
+
+    await placeEndpoints(user);
+    await user.click(
+      screen.getByRole("button", { name: "Run spatial test" }),
+    );
+
+    expect(await screen.findByText("Destination is invalid")).toBeVisible();
+    expect(screen.getByText("Overlay: fail/0/0.7/1.8/failure")).toBeVisible();
   });
 
   test("presents measured and required widths for a failure", async () => {

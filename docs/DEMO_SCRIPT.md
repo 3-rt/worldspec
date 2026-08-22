@@ -38,8 +38,8 @@ Record these as three separate clips. Leave two seconds of stillness at the begi
 ### Clip 3: verified result, 15 to 25 seconds
 
 - Keep `Contract verified` and the evidence measurements visible.
-- Orbit very slowly around the overhead angle while keeping the green route in view.
-- End with the route, `6.3 m`, and `2.22 m` all readable.
+- Orbit very slowly around the overhead angle while keeping the measured green corridor in view.
+- End with the width rails, height gates, moving scan marker, `6.3 m`, and `2.22 m` all readable.
 
 ## Narration script
 
@@ -53,7 +53,7 @@ Record this as one Voice Memos take in a quiet room. Speak naturally and leave a
 >
 > First, I set the robot's width to 1.4 metres. WorldSpec converts that requirement into body, slope, step, and clearance constraints. Recast rebuilds the navigation surface for that body and checks both anchors. The destination is invalid for this larger robot, so the test fails and identifies exactly where it fails.
 >
-> Now I change only the width to 0.7 metres. The world and route anchors stay the same. This time Recast finds a connected 6.3 metre route. WorldSpec samples the route against the Marble collider and measures 2.22 metres of minimum clearance. The route appears in green and the contract passes.
+> Now I change only the width to 0.7 metres. The world and route anchors stay the same. This time Recast finds a connected 6.3 metre route. WorldSpec samples the route against the Marble collider and measures 2.22 metres of minimum clearance. The green measurement corridor shows the tested width and height directly in the world, and the contract passes.
 >
 > The World Labs API key stays on the server. The browser receives fresh SPZ and GLB asset URLs, then Three.js, Spark, Recast, and deterministic ray tests produce the result. I built the full pipeline solo during Ignition Hacks.
 >

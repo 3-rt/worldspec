@@ -4,14 +4,14 @@ Updated: August 22, 2026 at 1:07 AM America/Toronto
 
 ## Current milestone
 
-The submission build is merged, deployed, and ready for HackHub. WorldSpec provides the complete setup, inspect, analyze, and evidence workflow, resolves the prepared Marble world by stable ID, renders its real splat and collider, and loads a verified proof route with visible anchors. Signed-out production testing has verified the 1.4 metre failure and 0.7 metre pass on desktop and mobile. The public package now includes the application, repository, rubric-aligned copy, production screenshots, and a 2:23 narrated judging video.
+The submission build is merged, deployed, and ready for HackHub. WorldSpec provides the complete setup, inspect, analyze, and evidence workflow, resolves the prepared Marble world by stable ID, renders its real splat and collider, and loads a verified proof route with visible anchors. Its 3D evidence draws the tested body as a measured width-and-height corridor and marks an invalid destination with a red beacon. Signed-out production testing has verified the 1.4 metre failure and 0.7 metre pass on desktop and mobile. The public package now includes the application, repository, rubric-aligned copy, production screenshots, and a 2:23 narrated judging video.
 
 ## Verified evidence
 
 - Node.js: 24.19.0 LTS through `/opt/homebrew/opt/node@24/bin`
 - npm: 11.17.0
 - Runtime audit: 0 vulnerabilities
-- Unit, component, and route tests: 15 files passed, 59 tests passed
+- Unit, component, and route tests: 18 files passed, 68 tests passed
 - ESLint: passed
 - TypeScript: passed with no emit
 - Production build: passed with static `/` route
