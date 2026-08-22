@@ -144,7 +144,7 @@ Commit with `git commit -m "build: establish WorldSpec application baseline"`.
 **Interfaces:**
 - Produces: `defaultAgentProfile`, Zod domain schemas, `compileRequirement(sourceText, baseAgent)`, and `summarizeReport(report)`.
 
-- [ ] **Step 1: Write failing compiler tests**
+- [x] **Step 1: Write failing compiler tests**
 
 Define desired defaults: radius `0.35`, height `1.8`, maximum slope `45`, step height `0.3`, and minimum clearance `0.7`. Assert:
 
@@ -161,15 +161,15 @@ expect(compileRequirement(
 
 Also prove missing measurements use the literal defaults.
 
-- [ ] **Step 2: Verify red, implement, and verify green**
+- [x] **Step 2: Verify red, implement, and verify green**
 
 Run `npm test -- src/features/analysis/requirement-parser.test.ts`. Implement metre unit normalization, height matching near `tall` or `height`, width matching near `wide` or `width`, width-to-radius conversion, and `without jumping` handling. Validate the returned value through `worldContractSchema`. Rerun until green.
 
-- [ ] **Step 3: Test and implement evidence copy**
+- [x] **Step 3: Test and implement evidence copy**
 
 First assert that measured clearance `0.42` against required `0.7` yields title `Clearance fails`, tone `fail`, and both values. Assert a passing 12.4 metre route yields `Contract verified`, tone `pass`, and `12.4 m`. Implement `summarizeReport` using the first failure as evidence.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run `npm test -- src/features/analysis`. Update state and commit with `git commit -m "feat: compile spatial requirements into test contracts"`.
 

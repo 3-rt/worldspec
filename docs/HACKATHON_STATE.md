@@ -1,17 +1,17 @@
 # WorldSpec Hackathon State
 
-Updated: August 21, 2026 at 8:27 PM America/Toronto
+Updated: August 21, 2026 at 8:30 PM America/Toronto
 
 ## Current milestone
 
-Task 1 of 10 is complete. The application has a strict TypeScript and Next.js baseline on `feat/worldspec-mvp`, a tested accessible shell, and committed quality commands. Task 2 is next: domain schemas, deterministic requirement compilation, and evidence copy.
+Task 2 of 10 is complete. WorldSpec has validated metric domain contracts, a deterministic requirement compiler, and evidence-first result summaries. Task 3 is next: the server-only World Labs API boundary.
 
 ## Verified evidence
 
 - Node.js: 24.19.0 LTS through `/opt/homebrew/opt/node@24/bin`
 - npm: 11.17.0
 - Runtime audit: 0 vulnerabilities
-- Unit test: 1 file passed, 1 test passed
+- Unit tests: 3 files passed, 7 tests passed before the Task 2 commit
 - ESLint: passed
 - TypeScript: passed with no emit
 - Production build: passed with static `/` route
@@ -23,6 +23,8 @@ Task 1 of 10 is complete. The application has a strict TypeScript and Next.js ba
 - Keep ESLint 9.39.5 because Next 16.3.2's bundled plugins do not yet accept ESLint 10, despite the top-level configuration's broader peer range.
 - Pin reviewed dependency install scripts for `unrs-resolver` and both installed `fsevents` versions.
 - Continue in the requested dedicated repository on a feature branch instead of creating a nested worktree.
+- Treat the stated avatar width as both the minimum passage clearance and twice the navigation radius.
+- Support metre and centimetre spellings deterministically so the demo's natural-language interaction never depends on another AI service.
 
 ## Current risks
 
@@ -42,4 +44,4 @@ Task 1 of 10 is complete. The application has a strict TypeScript and Next.js ba
 
 ## Next action
 
-Write failing tests for the WorldSpec domain schemas and deterministic requirement compiler.
+Write a full sanitized World Labs response fixture and failing normalization tests.
