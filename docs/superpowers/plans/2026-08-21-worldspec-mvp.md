@@ -253,19 +253,19 @@ Run viewer and transform tests plus typecheck, with no browser-only code during 
 **Interfaces:**
 - Produces: `buildNavigationSurface(meshes, profile)`, `findRoute(surface, start, goal)`, and `analyzeWorld(input)`.
 
-- [ ] **Step 1: Write failing tests against real synthetic geometry**
+- [x] **Step 1: Write failing tests against real synthetic geometry**
 
 Initialize Recast. A broad floor must return a path from `(-4, 0, 0)` to `(4, 0, 0)` with endpoints within `0.25` metres. Disconnected floor islands must return `unreachable`.
 
-- [ ] **Step 2: Implement the Recast adapter**
+- [x] **Step 2: Implement the Recast adapter**
 
 Cache WASM initialization. Use `threeToSoloNavMesh` with profile-derived radius, height, slope, climb, cell size `0.15`, and cell height `0.1`. Return a narrow wrapper with `findNearestPoint`, `computePath`, and `destroy` rather than leaking Recast objects.
 
-- [ ] **Step 3: Test and implement orchestration**
+- [x] **Step 3: Test and implement orchestration**
 
 After the adapter is green, test invalid start, invalid goal, unreachable, and passing route reports. Project endpoints within `0.75` metres, calculate route length, return explicit failure locations, and destroy resources in `finally`.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run `npm test -- src/features/analysis`. Expect no WASM leaks or console errors. Update state and commit with `git commit -m "feat: verify world reachability with collider navigation"`.
 
