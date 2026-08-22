@@ -185,23 +185,23 @@ Run `npm test -- src/features/analysis`. Update state and commit with `git commi
 **Interfaces:**
 - Produces: `WorldAssets`, `WorldOperation`, `createWorldLabsClient({ apiKey, baseUrl, fetch })`, world retrieval, generation, and operation polling routes.
 
-- [ ] **Step 1: Write a full sanitized fixture and failing normalization tests**
+- [x] **Step 1: Write a full sanitized fixture and failing normalization tests**
 
 Mirror every documented field used by the app. Use `https://assets.example.test/` URLs, `metric_scale_factor: 1.25`, and `ground_plane_offset: 0.4`. Assert the 500k SPZ and collider normalize into `WorldAssets`, while either missing asset returns `World assets are incomplete`.
 
-- [ ] **Step 2: Implement schemas and normalization**
+- [x] **Step 2: Implement schemas and normalization**
 
 Use Zod for nullable API metadata, require consumed assets, retain all SPZ resolutions, and never return credentials. Verify with `npm test -- src/lib/worldlabs/normalize.test.ts`.
 
-- [ ] **Step 3: Write failing injected-fetch client tests**
+- [x] **Step 3: Write failing injected-fetch client tests**
 
 Using real `Response` objects, prove `getWorld("world-123")` sends a GET to `/marble/v1/worlds/world-123` with `WLT-Api-Key`; `generateWorld` sends the documented `marble-1.1` text body; `getOperation` parses in-progress and complete operations; and HTTP 429 maps to code `rate-limited` without response bodies or credentials in its message.
 
-- [ ] **Step 4: Implement client, safe errors, and thin routes**
+- [x] **Step 4: Implement client, safe errors, and thin routes**
 
 Use one private request function with `cache: "no-store"`, schema validation, injected fetch, and bounded safe errors. Validate generation input as trimmed `{ displayName, prompt }` with a 1,500-character maximum. Routes serialize normalized results or `{ error: { code, message } }`.
 
-- [ ] **Step 5: Verify live read-only access and commit**
+- [x] **Step 5: Verify live read-only access and commit**
 
 Run all World Labs tests and typecheck. Call `POST /marble/v1/worlds:list` with `{}` using the configured key, printing only HTTP status and world count. Expect 200. Update state and commit with `git commit -m "feat: add secure World Labs API boundary"`.
 
