@@ -8,6 +8,8 @@ Built solo for Ignition Hacks V7, targeting **Best of World Labs** in the **Art*
 
 **[Open the live WorldSpec demo](https://worldspec.vercel.app)**
 
+**[Watch the 2:23 judging video](https://github.com/3-rt/worldspec/releases/tag/ignition-hacks-v7-submission)**
+
 ![WorldSpec verifying a 6.3 metre route through a World Labs Marble world](docs/assets/worldspec-pass.png)
 
 The prepared proof is deliberately comparative: the same destination rejects a
