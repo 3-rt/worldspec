@@ -1,20 +1,28 @@
 # WorldSpec Hackathon State
 
-Updated: August 21, 2026 at 10:00 PM America/Toronto
+Updated: August 22, 2026 at 1:05 AM America/Toronto
 
 ## Current milestone
 
-The MVP implementation and delivery package are complete. WorldSpec provides the full setup, inspect, analyze, and evidence workflow, resolves a prepared Marble world by stable ID, keeps that demo active during optional generation, and loads a verified proof route with visible anchors. Live generation produced the orbital greenhouse, and its real collider builds a valid navigation surface. The public GitHub repository is live. Production deployment, visual alignment and responsive QA, and a non-skipped live end-to-end run remain.
+The MVP is merged and the production application is live. WorldSpec provides the complete setup, inspect, analyze, and evidence workflow, resolves the prepared Marble world by stable ID, renders its real splat and collider, and loads a verified proof route with visible anchors. Signed-out production testing has verified the 1.4 metre failure and 0.7 metre pass on desktop and mobile. A final submission-polish branch now improves mobile controls, evidence contrast, pending-state responsiveness, burst caching, browser tests, rubric mapping, and judge-facing copy before the final deployment and video.
 
 ## Verified evidence
 
 - Node.js: 24.19.0 LTS through `/opt/homebrew/opt/node@24/bin`
 - npm: 11.17.0
 - Runtime audit: 0 vulnerabilities
-- Unit, component, and route tests: 15 files passed, 58 tests passed
+- Unit, component, and route tests: 15 files passed, 59 tests passed
 - ESLint: passed
 - TypeScript: passed with no emit
 - Production build: passed with static `/` route
+- Real-browser desktop workflow: 1.4 metre profile fails; 0.7 metre profile verifies a 6.3 metre route with 2.22 metre minimum clearance
+- Real-browser mobile workflow: verified at 390 x 844 with no persistent horizontal overflow
+- End-to-end Chromium suite: 3 tests passed, including the full fail-to-pass journey, mobile controls, and evidence contrast
+- Submission screenshots: inspected from the optimized production build in both failure and passing states
+- Accessibility audit: named visible controls, visible keyboard focus, 44 px touch targets, AA evidence-label contrast, and reduced-motion support
+- Production runtime: no console errors, page errors, failed requests, or HTTP errors during the verified journey
+- Public production URL: https://worldspec.vercel.app
+- Public repository: https://github.com/3-rt/worldspec
 - API credential files: ignored by Git
 
 ## Decisions made during execution
@@ -42,10 +50,10 @@ The MVP implementation and delivery package are complete. WorldSpec provides the
 
 ## Current risks
 
-1. Marble SPZ and collider alignment still needs visual verification in a WebGL browser.
-2. Production hosting remains unverified.
-3. The in-app browser is not connected, so desktop and mobile visual QA remains blocked on that surface.
-4. Vercel CLI is installed but requires Basil to complete account login before project linking and deployment.
+1. The final submission-polish branch still needs the no-mistakes gate, merge, production deployment, and signed-out recheck.
+2. The demo video still needs final recording, public upload, and signed-out playback verification.
+3. HackHub requires Basil's authenticated account and explicit final submission action.
+4. Spark 2.1.0 emits one upstream Three.js `Clock` deprecation warning. Spark 2.1.0 is the current release and declares compatibility with the installed Three.js version; no application console error occurs.
 
 ## Live World Labs evidence
 
@@ -75,4 +83,4 @@ The MVP implementation and delivery package are complete. WorldSpec provides the
 
 ## Next action
 
-Complete Vercel login and deployment, then run real-browser alignment, responsive QA, and the end-to-end journey when the connected browser is available.
+Finish the submission-polish gate, merge and deploy it, record the production demo under 2:45, verify every public link signed out, and hand Basil the final HackHub copy plus the one remaining upload-and-submit sequence.
