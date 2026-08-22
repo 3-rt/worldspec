@@ -18,7 +18,7 @@
 
 ## Public delivery
 
-- [ ] Public GitHub repository created and pushed.
+- [x] Public GitHub repository created and pushed.
 - [ ] Production deployment includes server-only World Labs variables.
 - [ ] Deployment tested while signed out.
 - [ ] Repository and README tested while signed out.
@@ -33,6 +33,16 @@
 - [ ] Mention World Labs as the source of both the visual world and collider evidence.
 - [ ] Upload video publicly.
 - [ ] Confirm playback while signed out.
+
+## Rubric proof
+
+- [ ] Uniqueness: distinguish spatial QA from generation, exploration, or a generic 3D viewer.
+- [ ] Technical implementation: show the live splat, collider alignment, requirement compiler, avatar-aware navmesh, and clearance evidence.
+- [ ] Presentation: name the user, problem, visible failure, passing result, and real-world value within 2:45.
+- [ ] Art theme: explain that creators need functional validation for generated spatial art and environments.
+- [ ] Impact and usefulness: name technical artists and level designers first, then players, robots, and accessibility workflows.
+- [ ] Sponsor track: show that World Labs supplies both representations required by the product, not a decorative asset.
+- [ ] Solo track: state that WorldSpec was designed and built by one hacker during Ignition Hacks V7.
 
 ## HackHub
 

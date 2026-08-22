@@ -1,10 +1,10 @@
 # WorldSpec Hackathon State
 
-Updated: August 21, 2026 at 9:22 PM America/Toronto
+Updated: August 21, 2026 at 9:28 PM America/Toronto
 
 ## Current milestone
 
-Task 7 is complete and Task 8 is in progress. WorldSpec now provides the complete setup, inspect, analyze, and evidence workflow, resolves a prepared Marble world by stable ID, keeps the prepared demo active during optional generation, and can load a verified proof route with visible anchors. Live generation produced the orbital greenhouse and its real collider now builds a valid navigation surface. Visual alignment verification remains before Task 8 can close.
+Task 7 is complete and Task 8 is in progress. WorldSpec now provides the complete setup, inspect, analyze, and evidence workflow, resolves a prepared Marble world by stable ID, keeps the prepared demo active during optional generation, and can load a verified proof route with visible anchors. Live generation produced the orbital greenhouse and its real collider now builds a valid navigation surface. The public GitHub repository is live. Production deployment and visual alignment verification remain before Task 8 can close.
 
 ## Verified evidence
 
@@ -45,6 +45,7 @@ Task 7 is complete and Task 8 is in progress. WorldSpec now provides the complet
 1. Marble SPZ and collider alignment still needs visual verification in a WebGL browser.
 2. Production hosting remains unverified.
 3. The in-app browser is not connected, so desktop and mobile visual QA remains blocked on that surface.
+4. Vercel CLI is installed but requires Basil to complete account login before project linking and deployment.
 
 ## Live World Labs evidence
 
@@ -65,6 +66,13 @@ Task 7 is complete and Task 8 is in progress. WorldSpec now provides the complet
 - Required public links: GitHub repository and demo video
 - External HackHub submission requires Basil's explicit authorization
 
+## Judging rubric
+
+- General scoring: uniqueness, technical implementation, presentation and description, theme alignment, and impact and usefulness.
+- Best Solo Hack: technical execution, ambition for a solo effort, and polish and completion, each scored from 0 to 5.
+- Sponsor tracks: integration and creativity, scored from 0 to 5.
+- Demo priority: explicitly show why World Labs is indispensable, name technical artists and level designers as the first user, and make the 1.4 metre failure to 0.7 metre pass contrast visible.
+
 ## Next action
 
-Complete real-browser alignment and responsive QA, then add the end-to-end journey and deploy the verified branch.
+Complete Vercel login and deployment, then run real-browser alignment, responsive QA, and the end-to-end journey when the connected browser is available.

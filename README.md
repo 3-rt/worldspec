@@ -12,6 +12,8 @@ Generative world models can produce a scene that looks convincing while hiding f
 
 WorldSpec adds that missing verification layer.
 
+The first target user is a technical artist or level designer reviewing an AI-generated space before it reaches a game, simulation, robot, or accessibility workflow.
+
 ## What it does
 
 1. Loads a persistent world generated with World Labs Marble.
@@ -62,8 +64,8 @@ Requirements:
 - A World Labs API key with Marble access
 
 ```bash
-git clone <repository-url>
-cd ignition-hacks-2026
+git clone https://github.com/3-rt/worldspec.git
+cd worldspec
 npm install
 cp .env.example .env.local
 npm run dev

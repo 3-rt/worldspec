@@ -4,7 +4,7 @@ Target duration: 2:45
 
 ## 0:00-0:20 - Problem
 
-"Generated 3D worlds can look finished while still being physically unusable. A route can be disconnected, an entrance can be invalid, or a space can reject the avatar it was designed for. WorldSpec turns that hidden risk into a test."
+"Generated 3D worlds can look finished while still being physically unusable. A route can be disconnected, an entrance can be invalid, or a space can reject the avatar it was designed for. WorldSpec gives technical artists and level designers a spatial QA test before that world ships."
 
 Show the title and the full workspace.
 
@@ -46,6 +46,6 @@ Point out route length, minimum clearance, and compute time.
 
 ## 2:30-2:45 - Impact and close
 
-"World models should not only create places. They should help us prove those places work for players, robots, and accessibility needs. WorldSpec is the QA layer between a beautiful generated world and a usable one."
+"World models should not only create places. They should help us prove those places work for players, robots, and accessibility needs. WorldSpec turns Marble's visual and physical outputs into the QA layer between a beautiful generated world and a usable one."
 
 End on the pass evidence and the WorldSpec wordmark.
