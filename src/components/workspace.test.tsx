@@ -114,6 +114,21 @@ const failingReport: AnalysisReport = {
 };
 
 describe("Workspace", () => {
+  test("keeps the prepared demo but hides unavailable generation", () => {
+    const preparedWorld = normalizeWorld(worldResponseFixture.world);
+
+    render(
+      <Workspace
+        initialAssets={preparedWorld}
+        ViewerComponent={FakeViewer}
+        generationEnabled={false}
+      />,
+    );
+
+    expect(screen.getByText("World: Threshold Courtyard")).toBeVisible();
+    expect(screen.queryByText("Generate another world")).not.toBeInTheDocument();
+  });
+
   test("loads the prepared Marble world into the inspection flow", async () => {
     const world = normalizeWorld(worldResponseFixture.world);
 

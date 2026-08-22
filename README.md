@@ -78,7 +78,12 @@ WORLDLABS_API_KEY=your_private_key
 WORLDLABS_API_BASE_URL=https://api.worldlabs.ai
 WORLDLABS_MODEL=marble-1.1
 DEMO_WORLD_ID=your_prepared_world_id
+WORLDLABS_GENERATION_ENABLED=
 ```
+
+New world generation is available in local development. Production deployments
+disable it by default so the prepared demo remains reliable and quota-safe. Set
+the server-only `WORLDLABS_GENERATION_ENABLED=true` deployment variable to opt in.
 
 Open `http://localhost:3000` in a current desktop Chromium browser with WebGL2.
 

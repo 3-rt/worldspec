@@ -1,6 +1,13 @@
 import { createWorldLabsClient } from "./client";
 import { WorldLabsError } from "./errors";
 
+export function isWorldGenerationEnabled(): boolean {
+  return (
+    process.env.NODE_ENV !== "production" ||
+    process.env.WORLDLABS_GENERATION_ENABLED === "true"
+  );
+}
+
 export function createServerWorldLabsClient() {
   return createWorldLabsClient({
     apiKey: process.env.WORLDLABS_API_KEY ?? "",

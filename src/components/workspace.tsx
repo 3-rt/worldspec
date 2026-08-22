@@ -49,6 +49,7 @@ export type WorkspaceViewerProps = WorldViewerProps;
 
 type WorkspaceProps = {
   initialAssets?: WorldAssets | null;
+  generationEnabled?: boolean;
   ViewerComponent?: ComponentType<WorkspaceViewerProps>;
   analyze?: (input: AnalyzeWorldInput) => Promise<AnalysisReport>;
   loadDemo?: (signal?: AbortSignal) => Promise<WorldAssets>;
@@ -60,6 +61,7 @@ const loadPreparedDemo = (signal?: AbortSignal) =>
 
 export function Workspace({
   initialAssets,
+  generationEnabled = true,
   ViewerComponent = WorldViewer,
   analyze = analyzeWorld,
   loadDemo = loadPreparedDemo,
@@ -356,7 +358,7 @@ export function Workspace({
             isGenerating={isGenerating}
             generationProgress={generationProgress}
             generationError={generationError}
-            onGenerate={handleGenerate}
+            onGenerate={generationEnabled ? handleGenerate : undefined}
           />
           <AnalysisPanel
             requirement={contract.sourceText}

@@ -22,6 +22,37 @@ function configureServer() {
 }
 
 describe("World Labs route boundary", () => {
+  test("disables generation in production unless explicitly enabled", async () => {
+    configureServer();
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("WORLDLABS_GENERATION_ENABLED", "");
+    let upstreamCalls = 0;
+    vi.stubGlobal("fetch", async () => {
+      upstreamCalls += 1;
+      return new Response();
+    });
+
+    const response = await generateWorld(
+      new Request("http://localhost/api/worlds/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          displayName: "Threshold Courtyard",
+          prompt: "An orbital greenhouse.",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(403);
+    expect(await response.json()).toEqual({
+      error: {
+        code: "generation-disabled",
+        message: "New Marble world generation is disabled on this deployment.",
+      },
+    });
+    expect(upstreamCalls).toBe(0);
+  });
+
   test("rejects an empty generation prompt before calling upstream", async () => {
     configureServer();
     let upstreamCalls = 0;
@@ -48,8 +79,9 @@ describe("World Labs route boundary", () => {
     expect(upstreamCalls).toBe(0);
   });
 
-  test("trims valid generation input and returns operation progress", async () => {
+  test("preserves generation in local development", async () => {
     configureServer();
+    vi.stubEnv("NODE_ENV", "development");
     let upstreamBody = "";
     vi.stubGlobal(
       "fetch",
@@ -79,6 +111,26 @@ describe("World Labs route boundary", () => {
       display_name: "Threshold Courtyard",
       world_prompt: { text_prompt: "An orbital greenhouse." },
     });
+  });
+
+  test("allows production generation when explicitly enabled", async () => {
+    configureServer();
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("WORLDLABS_GENERATION_ENABLED", "true");
+    vi.stubGlobal("fetch", async () => Response.json(pendingOperationFixture));
+
+    const response = await generateWorld(
+      new Request("http://localhost/api/worlds/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          displayName: "Threshold Courtyard",
+          prompt: "An orbital greenhouse.",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(202);
   });
 
   test("rejects a generation prompt above the upstream boundary", async () => {

@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import {
   createServerWorldLabsClient,
+  isWorldGenerationEnabled,
   worldLabsRouteError,
 } from "@/lib/worldlabs/server";
 
@@ -11,6 +12,18 @@ const generationRequestSchema = z.object({
 });
 
 export async function POST(request: Request): Promise<Response> {
+  if (!isWorldGenerationEnabled()) {
+    return Response.json(
+      {
+        error: {
+          code: "generation-disabled",
+          message: "New Marble world generation is disabled on this deployment.",
+        },
+      },
+      { status: 403 },
+    );
+  }
+
   let payload: unknown;
   try {
     payload = await request.json();
