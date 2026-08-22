@@ -1,0 +1,7 @@
+# Local environment files may contain private credentials.
+.env
+.env.*
+!.env.example
+
+# Organizer material is kept locally for planning, not redistributed in the public repo.
+/references/Ignition-Hacks-V7-Hacker-Package.pdf
