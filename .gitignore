@@ -5,3 +5,17 @@
 
 # Organizer material is kept locally for planning, not redistributed in the public repo.
 /references/Ignition-Hacks-V7-Hacker-Package.pdf
+
+# Next.js and test output.
+/.next/
+/out/
+/coverage/
+/test-results/
+/playwright-report/
+/blob-report/
+
+# Dependencies and local tooling.
+/node_modules/
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store

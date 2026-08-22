@@ -6,7 +6,7 @@
 
 **Architecture:** A Next.js App Router application keeps World Labs credentials in server-only route handlers and runs the interactive Three.js, Spark, and Recast workflow in the browser. Domain parsing, coordinate transforms, route classification, and clearance measurement live in focused framework-independent modules with deterministic tests. The reliable demo path resolves a pre-generated world ID through the API, while live generation is an additional supported path.
 
-**Tech Stack:** Node.js 22 or newer, npm 10, Next.js 16.3.2, React 19.2.8, TypeScript, Three.js 0.185.1, Spark 2.1.0, Recast Navigation 0.43.1, Zod, Vitest 4.1.11, Testing Library, Playwright 1.62.1, ESLint, and CSS.
+**Tech Stack:** Node.js 24.19 LTS, npm 11, Next.js 16.3.2, React 19.2.8, TypeScript, Three.js 0.185.1, Spark 2.1.0, Recast Navigation 0.43.1, Zod, Vitest 4.1.11, Testing Library, Playwright 1.62.1, ESLint, and CSS.
 
 **Spec:** `docs/design/2026-08-21-worldspec-design.md`
 
@@ -92,7 +92,7 @@
 - Consumes: approved design and submission facts.
 - Produces: `npm run dev`, `npm run test`, `npm run test:e2e`, `npm run lint`, `npm run typecheck`, `npm run build`, a server-rendered shell, and safe environment names.
 
-- [ ] **Step 1: Create the feature branch and configuration**
+- [x] **Step 1: Create the feature branch and configuration**
 
 Run `git switch -c feat/worldspec-mvp`. Configure exact scripts, TypeScript strict mode, `@/` alias, Vitest `jsdom`, Testing Library cleanup, ESLint, and Playwright desktop Chromium on port 3000. Set `.env.example` to:
 
@@ -105,7 +105,7 @@ DEMO_WORLD_ID=
 
 Install the versions in the header and verify `npm audit --omit=dev` has no high or critical runtime findings.
 
-- [ ] **Step 2: Write the failing shell test**
+- [x] **Step 2: Write the failing shell test**
 
 ```tsx
 import { render, screen } from "@testing-library/react";
@@ -119,15 +119,15 @@ test("introduces WorldSpec as spatial QA rather than world generation", () => {
 });
 ```
 
-- [ ] **Step 3: Verify red**
+- [x] **Step 3: Verify red**
 
 Run `npm test -- src/app/page.test.tsx`. Expect failure because `page.tsx` is absent.
 
-- [ ] **Step 4: Implement the minimal shell**
+- [x] **Step 4: Implement the minimal shell**
 
 Use Archivo and Fragment Mono through `next/font/google`. Render the required `main`, `h1`, thesis, and `Workspace initializing` status. Establish color, typography, focus, reduced-motion, and viewport variables without building later controls.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run `npm test -- src/app/page.test.tsx`, `npm run lint`, `npm run typecheck`, and `npm run build`. Record exact evidence, next task, risks, and submission clock in `docs/HACKATHON_STATE.md`.
 
