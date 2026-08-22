@@ -24,7 +24,6 @@ describe("World Labs browser client", () => {
       fetchPreparedWorld({ fetch: fetchImplementation }),
     ).resolves.toEqual(normalizedWorld);
     expect(fetchImplementation).toHaveBeenCalledWith("/api/worlds/demo", {
-      cache: "no-store",
       signal: undefined,
     });
   });

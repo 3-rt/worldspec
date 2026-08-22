@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 import type { AnalysisReport } from "@/features/analysis/schemas";
 import { normalizeWorld } from "@/lib/worldlabs/normalize";
@@ -112,6 +112,10 @@ const failingReport: AnalysisReport = {
   ],
   elapsedMs: 28,
 };
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe("Workspace", () => {
   test("keeps the prepared demo but hides unavailable generation", () => {
@@ -268,16 +272,19 @@ describe("Workspace", () => {
 
   test("paints the pending state before starting geometry analysis", async () => {
     const user = userEvent.setup();
-    let pendingStateWasVisible = false;
+    const frames: FrameRequestCallback[] = [];
+    let analysisStarted = false;
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      frames.push(callback);
+      return frames.length;
+    });
 
     render(
       <Workspace
         initialAssets={null}
         ViewerComponent={FakeViewer}
         analyze={async () => {
-          pendingStateWasVisible = Boolean(
-            screen.queryByText("Reading the collider"),
-          );
+          analysisStarted = true;
           return passingReport;
         }}
       />,
@@ -288,7 +295,18 @@ describe("Workspace", () => {
       screen.getByRole("button", { name: "Run spatial test" }),
     );
 
-    expect(pendingStateWasVisible).toBe(true);
+    expect(screen.getByText("Reading the collider")).toBeVisible();
+    expect(analysisStarted).toBe(false);
+
+    await act(async () => {
+      frames.shift()?.(0);
+    });
+    expect(analysisStarted).toBe(false);
+
+    await act(async () => {
+      frames.shift()?.(16);
+    });
+    expect(analysisStarted).toBe(true);
     expect(await screen.findByText("Contract verified")).toBeVisible();
   });
 

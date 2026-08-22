@@ -296,7 +296,9 @@ export function Workspace({
 
     try {
       await new Promise<void>((resolve) => {
-        window.setTimeout(resolve, 0);
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => resolve());
+        });
       });
       if (runSequence.current !== thisRun) {
         return;
